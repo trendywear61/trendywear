@@ -41,11 +41,18 @@ export const ProductDetailPage = () => {
         }
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (product) {
+            if (quantity > product.stockQty) {
+                toast.error(`Only ${product.stockQty} items left in stock`);
+                return;
+            }
             addToCart(product, quantity);
             toast.success(`Added ${quantity} ${product.name} to cart!`);
             setQuantity(1);
+            
+            // Re-fetch product to get updated stock info if others are buying
+            await fetchProduct();
         }
     };
 

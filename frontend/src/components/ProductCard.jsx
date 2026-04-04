@@ -37,11 +37,13 @@ export const ProductCard = ({ product }) => {
                 {/* Stock Badges */}
                 <div className="absolute top-2 left-2 sm:top-4 sm:left-4 flex flex-col gap-1 sm:gap-2">
                     {product.stockQty === 0 ? (
-                        <span className="px-2 py-0.5 sm:px-3 sm:py-1 bg-charcoal-900/90 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-body font-black uppercase tracking-widest text-red-100">
-                            Out of Stock
-                        </span>
+                        <div className="flex flex-col gap-1">
+                            <span className="px-2 py-0.5 sm:px-3 sm:py-1 bg-red-600 text-white text-[8px] sm:text-[9px] font-body font-black uppercase tracking-widest rounded-sm shadow-lg">
+                                Out of Stock
+                            </span>
+                        </div>
                     ) : product.stockQty < 10 && (
-                        <span className="px-2 py-0.5 sm:px-3 sm:py-1 bg-beige-600/90 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-body font-black uppercase tracking-widest">
+                        <span className="px-2 py-0.5 sm:px-3 sm:py-1 bg-beige-600/90 backdrop-blur-sm text-white text-[8px] sm:text-[9px] font-body font-black uppercase tracking-widest rounded-sm shadow-lg">
                             Only {product.stockQty} Left
                         </span>
                     )}
