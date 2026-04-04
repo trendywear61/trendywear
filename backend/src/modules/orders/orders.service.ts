@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order, PaymentStatus, OrderStatus } from '../../shared/entities/order.entity';
 import { MailService } from '../../shared/services/mail.service';
+import { ProductsService } from '../products/products.service';
 
 @Injectable()
 export class OrdersService {
@@ -10,9 +11,26 @@ export class OrdersService {
         @InjectRepository(Order)
         private orderRepository: Repository<Order>,
         private mailService: MailService,
+        private productsService: ProductsService,
     ) { }
 
     async create(orderData: any) {
+        // 1. Verify and Decrease Stock
+        for (const item of orderData.items) {
+            const productRes = await this.productsService.findOne(item.id);
+            const product = productRes.data;
+
+            if (product.stockQty < item.quantity) {
+                throw new BadRequestException(`Insufficient stock for ${product.name}. Only ${product.stockQty} left.`);
+            }
+
+            // Update product stock manually
+            await this.productsService.update(product.id, {
+                stockQty: product.stockQty - item.quantity,
+                isActive: (product.stockQty - item.quantity) > 0 // Optionally keep it active but stock 0
+            });
+        }
+
         const order = this.orderRepository.create(orderData);
         const savedOrder: any = await this.orderRepository.save(order);
 
