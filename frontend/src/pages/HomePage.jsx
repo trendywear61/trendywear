@@ -16,6 +16,7 @@ export const HomePage = () => {
     const heroOpacity = useTransform(scrollY, [0, 400], [1, 0]);
 
     useEffect(() => {
+        document.title = "Home | Trendy Wear";
         fetchData();
     }, []);
 
@@ -175,7 +176,7 @@ export const HomePage = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
                             {featuredProducts.map((product, index) => (
                                 <motion.div
                                     key={product.id}

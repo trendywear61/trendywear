@@ -3,17 +3,30 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  // Security headers
+  app.use(helmet());
+
   // Enable CORS
   app.enableCors({
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production' 
+      ? process.env.FRONTEND_URL || 'https://trendywear.vercel.app' 
+      : '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
+
+  // Rate limiting for admin login
+  app.use('/api/admin/login', rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // limit each IP to 10 requests per windowMs
+    message: 'Too many login attempts from this IP, please try again after 15 minutes',
+  }));
 
   app.setGlobalPrefix('api');
 
@@ -23,10 +36,7 @@ async function bootstrap() {
     transform: true,
   }));
 
-  // Serve static files
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
-  });
+
 
   // Swagger setup
   const config = new DocumentBuilder()

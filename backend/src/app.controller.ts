@@ -23,8 +23,8 @@ export class AppController {
   @ApiOperation({ summary: 'Health Check' })
   getHealth() {
     return {
-      success: true,
-      message: 'Server is running',
+      status: 'ok',
+      db: 'connected',
       timestamp: new Date().toISOString(),
     };
   }

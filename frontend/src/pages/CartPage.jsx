@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useCart } from '../contexts/CartContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -6,6 +7,10 @@ import { getImageUrl } from '../utils/url';
 export const CartPage = () => {
     const { cartItems, updateQuantity, removeFromCart, getCartTotal } = useCart();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = "Shopping Bag | Trendy Wear";
+    }, []);
 
     const deliveryCharge = 50;
     const subtotal = getCartTotal();

@@ -11,6 +11,8 @@ export const OrderManagement = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ordersPerPage = 10;
 
     const statusFilter = searchParams.get('status') || '';
     const paymentFilter = searchParams.get('paymentStatus') || '';
@@ -191,7 +193,7 @@ export const OrderManagement = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {orders.map((order) => (
+                                {orders.slice((currentPage - 1) * ordersPerPage, currentPage * ordersPerPage).map((order) => (
                                     <tr key={order.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <p className="font-mono text-sm text-gray-900">{order.id.slice(-8)}</p>
@@ -248,6 +250,30 @@ export const OrderManagement = () => {
                                 ))}
                             </tbody>
                         </table>
+                        
+                        {orders.length > ordersPerPage && (
+                            <div className="bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-between">
+                                <span className="text-sm text-gray-700">
+                                    Showing <span className="font-semibold">{(currentPage - 1) * ordersPerPage + 1}</span> to <span className="font-semibold">{Math.min(currentPage * ordersPerPage, orders.length)}</span> of <span className="font-semibold">{orders.length}</span> orders
+                                </span>
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Previous
+                                    </button>
+                                    <button 
+                                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(orders.length / ordersPerPage)))}
+                                        disabled={currentPage === Math.ceil(orders.length / ordersPerPage)}
+                                        className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 

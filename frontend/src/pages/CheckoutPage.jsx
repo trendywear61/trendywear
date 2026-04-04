@@ -13,6 +13,10 @@ import { useAuth } from '../contexts/AuthContext';
 export const CheckoutPage = () => {
     const navigate = useNavigate();
     const { cartItems, getCartTotal, clearCart } = useCart();
+    
+    useEffect(() => {
+        document.title = "Checkout | Trendy Wear";
+    }, []);
     const { user, isAuthenticated } = useAuth();
     const [loading, setLoading] = useState(false);
     const [screenshot, setScreenshot] = useState(null);
@@ -353,8 +357,21 @@ export const CheckoutPage = () => {
                                             </div>
                                             <div className="flex-1 text-center md:text-left">
                                                 <h3 className="text-xl font-black mb-2 uppercase tracking-tight">Pay via UPI</h3>
-                                                 <div className="bg-white/10 px-6 py-3 rounded-2xl mb-4 inline-block">
+                                                <div className="bg-white/10 px-6 py-3 rounded-2xl mb-4 inline-flex items-center gap-3">
                                                     <code className="text-primary-400 font-bold text-lg">daviddavid88687@okhdfcbank</code>
+                                                    <button 
+                                                        type="button"
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText('daviddavid88687@okhdfcbank');
+                                                            toast.success('UPI ID copied to clipboard');
+                                                        }}
+                                                        className="text-slate-400 hover:text-white transition-colors p-2"
+                                                        title="Copy UPI ID"
+                                                    >
+                                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                        </svg>
+                                                    </button>
                                                 </div>
 
                                                 <p className="text-slate-400 text-sm font-medium leading-relaxed mb-4">

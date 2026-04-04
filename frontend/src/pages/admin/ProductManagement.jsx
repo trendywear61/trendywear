@@ -10,6 +10,7 @@ export const ProductManagement = () => {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -38,6 +39,21 @@ export const ProductManagement = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        let newErrors = {};
+        if (!formData.name.trim()) newErrors.name = "Name is required.";
+        if (!formData.description.trim()) newErrors.description = "Description is required.";
+        if (!formData.price || formData.price <= 0) newErrors.price = "Valid price is required.";
+        if (!formData.category.trim()) newErrors.category = "Category is required.";
+        if (formData.stockQty === '' || formData.stockQty < 0) newErrors.stockQty = "Valid stock quantity is required.";
+        if (!editingProduct && images.length === 0) newErrors.images = "At least one image is required.";
+        
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
+
+        setErrors({});
 
         const formDataToSend = new FormData();
         formDataToSend.append('name', formData.name);
@@ -106,6 +122,7 @@ export const ProductManagement = () => {
         });
         setImages([]);
         setEditingProduct(null);
+        setErrors({});
     };
 
     const handleImageChange = (e) => {
@@ -152,14 +169,24 @@ export const ProductManagement = () => {
                                     <tr key={product.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <img
-                                                    src={getImageUrl(product.images[0])}
-                                                    alt={product.name}
-                                                    className="w-12 h-12 object-cover rounded-lg"
-                                                />
+                                                <a href={getImageUrl(product.images[0])} target="_blank" rel="noopener noreferrer" className="shrink-0 group relative block">
+                                                    <img
+                                                        src={getImageUrl(product.images[0])}
+                                                        alt={product.name}
+                                                        className="w-12 h-12 object-cover rounded-lg border border-gray-200 group-hover:opacity-75 transition-opacity"
+                                                    />
+                                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <svg className="w-5 h-5 text-gray-900 bg-white/80 rounded-full p-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                        </svg>
+                                                    </div>
+                                                </a>
                                                 <div>
                                                     <p className="font-semibold text-gray-900">{product.name}</p>
                                                     <p className="text-sm text-gray-600 line-clamp-1">{product.description}</p>
+                                                    <a href={getImageUrl(product.images[0])} target="_blank" rel="noopener noreferrer" className="text-xs text-primary-600 hover:underline inline-block mt-0.5 max-w-[150px] truncate" title={getImageUrl(product.images[0])}>
+                                                        {getImageUrl(product.images[0])}
+                                                    </a>
                                                 </div>
                                             </div>
                                         </td>
@@ -224,10 +251,11 @@ export const ProductManagement = () => {
                                     <input
                                         type="text"
                                         value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        onChange={(e) => { setFormData({ ...formData, name: e.target.value }); setErrors({ ...errors, name: '' }); }}
                                         required
-                                        className="input-field"
+                                        className={`input-field ${errors.name ? 'border-red-500 bg-red-50' : ''}`}
                                     />
+                                    {errors.name && <p className="text-red-500 text-xs mt-1 font-medium">{errors.name}</p>}
                                 </div>
 
                                 <div>
@@ -236,11 +264,12 @@ export const ProductManagement = () => {
                                     </label>
                                     <textarea
                                         value={formData.description}
-                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                        onChange={(e) => { setFormData({ ...formData, description: e.target.value }); setErrors({ ...errors, description: '' }); }}
                                         required
                                         rows="3"
-                                        className="input-field"
+                                        className={`input-field ${errors.description ? 'border-red-500 bg-red-50' : ''}`}
                                     />
+                                    {errors.description && <p className="text-red-500 text-xs mt-1 font-medium">{errors.description}</p>}
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
@@ -251,11 +280,12 @@ export const ProductManagement = () => {
                                         <input
                                             type="number"
                                             value={formData.price}
-                                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                            onChange={(e) => { setFormData({ ...formData, price: e.target.value }); setErrors({ ...errors, price: '' }); }}
                                             required
                                             min="0"
-                                            className="input-field"
+                                            className={`input-field ${errors.price ? 'border-red-500 bg-red-50' : ''}`}
                                         />
+                                        {errors.price && <p className="text-red-500 text-xs mt-1 font-medium">{errors.price}</p>}
                                     </div>
 
                                     <div>
@@ -265,10 +295,11 @@ export const ProductManagement = () => {
                                         <input
                                             type="text"
                                             value={formData.category}
-                                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                            onChange={(e) => { setFormData({ ...formData, category: e.target.value }); setErrors({ ...errors, category: '' }); }}
                                             required
-                                            className="input-field"
+                                            className={`input-field ${errors.category ? 'border-red-500 bg-red-50' : ''}`}
                                         />
+                                        {errors.category && <p className="text-red-500 text-xs mt-1 font-medium">{errors.category}</p>}
                                     </div>
                                 </div>
 
@@ -279,11 +310,12 @@ export const ProductManagement = () => {
                                     <input
                                         type="number"
                                         value={formData.stockQty}
-                                        onChange={(e) => setFormData({ ...formData, stockQty: e.target.value })}
+                                        onChange={(e) => { setFormData({ ...formData, stockQty: e.target.value }); setErrors({ ...errors, stockQty: '' }); }}
                                         required
                                         min="0"
-                                        className="input-field"
+                                        className={`input-field ${errors.stockQty ? 'border-red-500 bg-red-50' : ''}`}
                                     />
+                                    {errors.stockQty && <p className="text-red-500 text-xs mt-1 font-medium">{errors.stockQty}</p>}
                                 </div>
 
                                 <div>
@@ -304,15 +336,23 @@ export const ProductManagement = () => {
                                     </label>
                                     <input
                                         type="file"
-                                        onChange={handleImageChange}
+                                        onChange={(e) => { handleImageChange(e); setErrors({ ...errors, images: '' }); }}
                                         multiple
                                         accept="image/*"
                                         required={!editingProduct}
-                                        className="input-field"
+                                        className={`input-field ${errors.images ? 'border-red-500 bg-red-50' : ''}`}
                                     />
+                                    {errors.images && <p className="text-red-500 text-xs mt-1 font-medium">{errors.images}</p>}
                                     <p className="text-sm text-gray-600 mt-1">
                                         {editingProduct ? 'Leave empty to keep existing images' : 'Select one or more images'}
                                     </p>
+                                    {images.length > 0 && (
+                                        <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
+                                            {images.map((img, i) => (
+                                                <img key={i} src={URL.createObjectURL(img)} alt="Preview" className="h-16 w-16 object-cover rounded-md shadow-sm border border-gray-200" />
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex gap-4 pt-4">

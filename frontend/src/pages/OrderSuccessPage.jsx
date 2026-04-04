@@ -15,6 +15,7 @@ export const OrderSuccessPage = () => {
     const [paymentConfirmed, setPaymentConfirmed] = useState(false);
 
     useEffect(() => {
+        document.title = `Order Confirmed - #${orderId} | Trendy Wear`;
         fetchOrder();
     }, [orderId]);
 

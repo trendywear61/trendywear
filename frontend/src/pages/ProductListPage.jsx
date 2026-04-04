@@ -25,6 +25,7 @@ export const ProductListPage = () => {
     });
 
     useEffect(() => {
+        document.title = "Products | Trendy Wear";
         const newFilters = {
             search: searchParams.get('search') || '',
             category: searchParams.get('category') || '',
@@ -308,7 +309,7 @@ export const ProductListPage = () => {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8"
+                                    className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8"
                                 >
                                     {[1, 2, 3, 4, 5, 6].map((i) => (
                                         <LoadingSkeleton key={i} type="product" />
@@ -340,7 +341,7 @@ export const ProductListPage = () => {
                                     key="grid"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8"
+                                    className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-8"
                                 >
                                     {displayedProducts.map((product, index) => (
                                         <motion.div

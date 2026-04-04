@@ -14,7 +14,55 @@ export class OrdersService {
 
     async create(orderData: any) {
         const order = this.orderRepository.create(orderData);
-        const savedOrder = await this.orderRepository.save(order);
+        const savedOrder: any = await this.orderRepository.save(order);
+
+        // Send order confirmation to customer
+        if (savedOrder.customer?.email) {
+            const itemsHtml = savedOrder.items.map((item: any) => 
+                `<li>${item.name} (${item.quantity}x) - ₹${item.price}</li>`
+            ).join('');
+
+            await this.mailService.sendEmail({
+                email: savedOrder.customer.email,
+                subject: `Order Received - #${savedOrder.id.slice(-8)}`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
+                      <h2 style="color: #333; text-align: center;">Order Received!</h2>
+                      <p>Dear ${savedOrder.customer.name},</p>
+                      <p>We have successfully received your order <strong>#${savedOrder.id.slice(-8)}</strong>.</p>
+                      <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                          <h3 style="margin-top: 0;">Order Summary</h3>
+                          <ul>${itemsHtml}</ul>
+                          <p><strong>Total Amount:</strong> ₹${parseFloat(savedOrder.totalAmount.toString()).toLocaleString()}</p>
+                          <p><strong>Payment Method:</strong> ${savedOrder.paymentMethod}</p>
+                          <p><strong>Estimated Delivery:</strong> 5-7 Business Days</p>
+                      </div>
+                      <p>Thank you for shopping with us!</p>
+                  </div>
+                `,
+            });
+        }
+
+        // Send new order alert to admin
+        if (process.env.ADMIN_EMAIL) {
+            await this.mailService.sendEmail({
+                email: process.env.ADMIN_EMAIL,
+                subject: `New Order Alert - #${savedOrder.id.slice(-8)}`,
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
+                      <h2 style="color: #333; text-align: center;">New Order Received!</h2>
+                      <p>You have received a new order from <strong>${savedOrder.customer?.name}</strong>.</p>
+                      <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                          <p><strong>Order ID:</strong> ${savedOrder.id}</p>
+                          <p><strong>Total Amount:</strong> ₹${parseFloat(savedOrder.totalAmount.toString()).toLocaleString()}</p>
+                          <p><strong>Payment Method:</strong> ${savedOrder.paymentMethod}</p>
+                      </div>
+                      <p>Please check the admin panel for more details.</p>
+                  </div>
+                `,
+            });
+        }
+
         return {
             success: true,
             message: 'Order created successfully',

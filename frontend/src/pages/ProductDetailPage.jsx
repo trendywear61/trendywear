@@ -20,6 +20,14 @@ export const ProductDetailPage = () => {
         fetchProduct();
     }, [id]);
 
+    useEffect(() => {
+        if (product) {
+            document.title = `${product.name} | Trendy Wear`;
+        } else {
+            document.title = "Product Details | Trendy Wear";
+        }
+    }, [product]);
+
     const fetchProduct = async () => {
         try {
             const res = await productsAPI.getById(id);
@@ -230,7 +238,7 @@ export const ProductDetailPage = () => {
                             </div>
                         ) : (
                             <div className="p-10 bg-slate-100 rounded-[3rem] border-2 border-dashed border-slate-200 text-center">
-                                <p className="text-slate-900 font-black text-xl mb-4 tracking-tighter italic">Sold Out.</p>
+                                <p className="text-slate-900 font-black text-xl mb-4 tracking-tighter italic">Out of Stock.</p>
                                 <p className="text-sm text-slate-500 font-medium">This piece is currently unavailable. Register interest to be notified on restock.</p>
                                 <button className="mt-8 px-8 py-4 bg-white rounded-2xl text-[10px] font-black uppercase tracking-widest border border-slate-200 shadow-sm">Notify Me</button>
                             </div>

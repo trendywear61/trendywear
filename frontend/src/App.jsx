@@ -19,6 +19,8 @@ import { UserProtectedRoute } from './components/UserProtectedRoute';
 import { AuthPage } from './pages/AuthPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { CartPage } from './pages/CartPage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { WhatsAppButton } from './components/WhatsAppButton';
 
 function App() {
     return (
@@ -99,10 +101,11 @@ function App() {
                                                         </UserProtectedRoute>
                                                     }
                                                 />
-                                                <Route path="*" element={<Navigate to="/" replace />} />
+                                                <Route path="*" element={<NotFoundPage />} />
                                             </Routes>
                                         </div>
                                         <Footer />
+                                        <WhatsAppButton />
                                     </div>
                                 </>
                             }
