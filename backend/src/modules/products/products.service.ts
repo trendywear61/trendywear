@@ -77,6 +77,10 @@ export class ProductsService {
         };
     }
 
+    async findOneById(id: string) {
+        return this.productRepository.findOne({ where: { id } });
+    }
+
     async create(productData: any) {
         const product = this.productRepository.create(productData);
         const savedProduct = await this.productRepository.save(product);

@@ -17,17 +17,25 @@ export class OrdersService {
     async create(orderData: any) {
         // 1. Verify and Decrease Stock
         for (const item of orderData.items) {
-            const productRes = await this.productsService.findOne(item.id);
-            const product = productRes.data;
-
-            if (product.stockQty < item.quantity) {
-                throw new BadRequestException(`Insufficient stock for ${product.name}. Only ${product.stockQty} left.`);
+            // Find product by UUID (the ID passed from frontend is the UUID)
+            const product = await this.productsService.findOneById(item.id);
+            
+            if (!product) {
+                throw new BadRequestException(`Product ${item.name} not found.`);
             }
 
-            // Update product stock manually
+            const currentStock = Number(product.stockQty);
+            const orderQty = Number(item.quantity);
+
+            if (currentStock < orderQty) {
+                throw new BadRequestException(`Insufficient stock for ${product.name}. Only ${currentStock} left.`);
+            }
+
+            // Update product stock
+            const newStock = currentStock - orderQty;
             await this.productsService.update(product.id, {
-                stockQty: product.stockQty - item.quantity,
-                isActive: (product.stockQty - item.quantity) > 0 // Optionally keep it active but stock 0
+                stockQty: newStock,
+                isActive: newStock > 0
             });
         }
 
