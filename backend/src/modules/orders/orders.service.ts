@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Order, PaymentStatus, OrderStatus } from '../../shared/entities/order.entity';
 import { MailService } from '../../shared/services/mail.service';
 import { ProductsService } from '../products/products.service';
+import { Product } from '../../shared/entities/product.entity';
 
 @Injectable()
 export class OrdersService {
@@ -12,93 +13,105 @@ export class OrdersService {
         private orderRepository: Repository<Order>,
         private mailService: MailService,
         private productsService: ProductsService,
+        private dataSource: DataSource,
     ) { }
 
     async create(orderData: any) {
-        // 1. Verify and Decrease Stock
-        for (const item of orderData.items) {
-            const product = await this.productsService.findOneById(item.id);
-            
-            if (!product) {
-                throw new BadRequestException(`Product ${item.name} not found.`);
+        return await this.dataSource.transaction(async transactionalEntityManager => {
+            // 1. Verify and Decrease Stock
+            for (const item of orderData.items) {
+                // Determine if we have id (direct from products) or productId (from formatted cart)
+                const pid = item.productId || item.id;
+                
+                const product = await transactionalEntityManager.findOne(Product, { 
+                    where: { id: pid },
+                    lock: { mode: 'pessimistic_write' } // Prevent race conditions
+                });
+                
+                if (!product) {
+                    throw new BadRequestException(`Product ${item.name || pid} not found.`);
+                }
+
+                // Ensure we are working with numbers
+                const currentStock = parseInt(String(product.stockQty), 10) || 0;
+                const orderQty = parseInt(String(item.quantity || item.qty), 10) || 0;
+
+                if (currentStock < orderQty) {
+                    throw new BadRequestException(`Insufficient stock for ${product.name}. Only ${currentStock} left.`);
+                }
+
+                // Update product stock
+                const newStock = Math.max(0, currentStock - orderQty);
+                
+                product.stockQty = newStock;
+                product.isActive = newStock > 0;
+                await transactionalEntityManager.save(product);
             }
 
-            // Ensure we are working with numbers
-            const currentStock = parseInt(String(product.stockQty), 10) || 0;
-            const orderQty = parseInt(String(item.quantity), 10) || 0;
+            const order = this.orderRepository.create(orderData);
+            const savedOrder: any = await transactionalEntityManager.save(order);
 
-            console.log(`Processing Stock for ${product.name}: Current=${currentStock}, Order=${orderQty}`);
+            // Move side effects (email) outside of the main critical path or handle after commit
+            this.handlePostOrderActions(savedOrder);
 
-            if (currentStock < orderQty) {
-                throw new BadRequestException(`Insufficient stock for ${product.name}. Only ${currentStock} left.`);
+            return {
+                success: true,
+                message: 'Order created successfully',
+                data: savedOrder,
+            };
+        });
+    }
+
+    private async handlePostOrderActions(savedOrder: any) {
+        try {
+            // Send order confirmation to customer
+            if (savedOrder.customer?.email) {
+                const itemsList = Array.isArray(savedOrder.items) ? savedOrder.items : [];
+                const itemsHtml = itemsList.map((item: any) => 
+                    `<li>${item.name} (${item.quantity || item.qty}x) - ₹${item.price}</li>`
+                ).join('');
+
+                await this.mailService.sendEmail({
+                    email: savedOrder.customer.email,
+                    subject: `Order Received - #${savedOrder.id.slice(-8)}`,
+                    html: `
+                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
+                          <h2 style="color: #333; text-align: center;">Order Received!</h2>
+                          <p>Dear ${savedOrder.customer.name},</p>
+                          <p>We have successfully received your order <strong>#${savedOrder.id.slice(-8)}</strong>.</p>
+                          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                              <h3 style="margin-top: 0;">Order Summary</h3>
+                              <ul>${itemsHtml}</ul>
+                              <p><strong>Total Amount:</strong> ₹${parseFloat(savedOrder.totalAmount.toString()).toLocaleString()}</p>
+                              <p><strong>Payment Method:</strong> ${savedOrder.paymentMethod}</p>
+                          </div>
+                          <p>Thank you for shopping with us!</p>
+                      </div>
+                    `,
+                });
             }
 
-            // Update product stock
-            const newStock = Math.max(0, currentStock - orderQty);
-            
-            console.log(`Setting new stock for ${product.id} to ${newStock}`);
-            
-            await this.productsService.update(product.id, {
-                stockQty: newStock,
-                isActive: newStock > 0
-            });
-        }
-
-        const order = this.orderRepository.create(orderData);
-        const savedOrder: any = await this.orderRepository.save(order);
-
-        // Send order confirmation to customer
-        if (savedOrder.customer?.email) {
-            const itemsHtml = savedOrder.items.map((item: any) => 
-                `<li>${item.name} (${item.quantity}x) - ₹${item.price}</li>`
-            ).join('');
-
-            await this.mailService.sendEmail({
-                email: savedOrder.customer.email,
-                subject: `Order Received - #${savedOrder.id.slice(-8)}`,
-                html: `
-                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
-                      <h2 style="color: #333; text-align: center;">Order Received!</h2>
-                      <p>Dear ${savedOrder.customer.name},</p>
-                      <p>We have successfully received your order <strong>#${savedOrder.id.slice(-8)}</strong>.</p>
-                      <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                          <h3 style="margin-top: 0;">Order Summary</h3>
-                          <ul>${itemsHtml}</ul>
-                          <p><strong>Total Amount:</strong> ₹${parseFloat(savedOrder.totalAmount.toString()).toLocaleString()}</p>
-                          <p><strong>Payment Method:</strong> ${savedOrder.paymentMethod}</p>
-                          <p><strong>Estimated Delivery:</strong> 5-7 Business Days</p>
+            // Send new order alert to admin
+            if (process.env.ADMIN_EMAIL) {
+                await this.mailService.sendEmail({
+                    email: process.env.ADMIN_EMAIL,
+                    subject: `New Order Alert - #${savedOrder.id.slice(-8)}`,
+                    html: `
+                      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
+                          <h2 style="color: #333; text-align: center;">New Order Received!</h2>
+                          <p>You have received a new order from <strong>${savedOrder.customer?.name}</strong>.</p>
+                          <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                              <p><strong>Order ID:</strong> ${savedOrder.id}</p>
+                              <p><strong>Total Amount:</strong> ₹${parseFloat(savedOrder.totalAmount.toString()).toLocaleString()}</p>
+                              <p><strong>Payment Method:</strong> ${savedOrder.paymentMethod}</p>
+                          </div>
                       </div>
-                      <p>Thank you for shopping with us!</p>
-                  </div>
-                `,
-            });
+                    `,
+                });
+            }
+        } catch (error) {
+            console.error('Error in post-order actions:', error);
         }
-
-        // Send new order alert to admin
-        if (process.env.ADMIN_EMAIL) {
-            await this.mailService.sendEmail({
-                email: process.env.ADMIN_EMAIL,
-                subject: `New Order Alert - #${savedOrder.id.slice(-8)}`,
-                html: `
-                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px;">
-                      <h2 style="color: #333; text-align: center;">New Order Received!</h2>
-                      <p>You have received a new order from <strong>${savedOrder.customer?.name}</strong>.</p>
-                      <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                          <p><strong>Order ID:</strong> ${savedOrder.id}</p>
-                          <p><strong>Total Amount:</strong> ₹${parseFloat(savedOrder.totalAmount.toString()).toLocaleString()}</p>
-                          <p><strong>Payment Method:</strong> ${savedOrder.paymentMethod}</p>
-                      </div>
-                      <p>Please check the admin panel for more details.</p>
-                  </div>
-                `,
-            });
-        }
-
-        return {
-            success: true,
-            message: 'Order created successfully',
-            data: savedOrder,
-        };
     }
 
     async findOne(id: string) {
