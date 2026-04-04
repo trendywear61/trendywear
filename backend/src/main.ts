@@ -10,14 +10,29 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Security headers
-  app.use(helmet());
+  app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginEmbedderPolicy: false,
+  }));
 
   // Enable CORS
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? process.env.FRONTEND_URL || 'https://trendywear.vercel.app' 
-      : '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    origin: process.env.NODE_ENV === "production"
+      ? (origin, callback) => {
+          const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            "https://trendy-wear.vercel.app",
+            "https://trendywear61.vercel.app",
+            "https://trendywear.vercel.app"
+          ].filter(Boolean);
+          if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+            callback(null, true);
+          } else {
+            callback(new Error("Not allowed by CORS"));
+          }
+        }
+      : "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   });
 
