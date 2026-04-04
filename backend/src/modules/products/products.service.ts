@@ -7,6 +7,7 @@ import * as path from 'path';
 
 @Injectable()
 export class ProductsService {
+    // Note: Always ensure stockQty and isActive are returned in DTOs/Responses
     constructor(
         @InjectRepository(Product)
         private productRepository: Repository<Product>,
