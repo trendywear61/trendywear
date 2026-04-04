@@ -165,14 +165,14 @@ export const CheckoutPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] pt-24 pb-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="min-h-screen bg-[#f8fafc] pt-20 sm:pt-24 pb-12">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-8 sm:mb-12">
                     <div>
-                        <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-2">
+                        <h1 className="text-2xl sm:text-4xl md:text-5xl font-black text-slate-900 mb-1 sm:mb-2">
                             Final <span className="text-gradient">Step</span>
                         </h1>
-                        <p className="text-slate-500 font-medium">Please provide your details to complete the order</p>
+                        <p className="text-slate-500 font-medium text-sm sm:text-base">Please provide your details to complete the order</p>
                     </div>
                 </div>
 

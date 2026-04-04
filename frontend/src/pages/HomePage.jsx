@@ -45,21 +45,21 @@ export const HomePage = () => {
                     className="absolute inset-0 z-0 bg-white"
                 />
 
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-20">
-                    <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full py-10 sm:py-20">
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                         <motion.div
                             initial={{ opacity: 0, x: -40 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
                         >
-                            <div className="inline-flex items-center space-x-3 mb-8">
-                                <div className="w-8 h-px bg-beige-500" />
-                                <span className="font-body text-[10px] font-black uppercase tracking-[0.4em] text-beige-600">
+                            <div className="inline-flex items-center space-x-3 mb-4 sm:mb-8">
+                                <div className="w-6 sm:w-8 h-px bg-beige-500" />
+                                <span className="font-body text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-beige-600">
                                     New Collection 2026
                                 </span>
                             </div>
 
-                            <h1 className="font-display text-7xl md:text-9xl font-bold text-charcoal-900 leading-none tracking-tight mb-8">
+                            <h1 className="font-display text-5xl sm:text-7xl md:text-9xl font-bold text-charcoal-900 leading-none tracking-tight mb-5 sm:mb-8">
                                 Dress
                                 <br />
                                 <span className="italic font-light text-beige-600">Your</span>
@@ -67,16 +67,16 @@ export const HomePage = () => {
                                 Story.
                             </h1>
 
-                            <p className="font-body text-lg text-charcoal-500 font-medium max-w-md mb-12 leading-relaxed">
+                            <p className="font-body text-sm sm:text-lg text-charcoal-500 font-medium max-w-md mb-8 sm:mb-12 leading-relaxed">
                                 Curated fashion for the modern individual. From everyday tees to statement pieces — discover clothing that speaks your language.
                             </p>
 
-                            <div className="flex flex-col sm:flex-row gap-4 mb-16">
-                                <Link to="/products">
+                            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-16">
+                                <Link to="/products" className="w-full sm:w-auto">
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full sm:w-auto px-10 py-5 bg-charcoal-900 text-white font-body font-bold text-[11px] uppercase tracking-[0.3em] flex items-center justify-center space-x-3"
+                                        className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-charcoal-900 text-white font-body font-bold text-[11px] uppercase tracking-[0.3em] flex items-center justify-center space-x-3"
                                     >
                                         <span>Shop Now</span>
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -84,18 +84,27 @@ export const HomePage = () => {
                                         </svg>
                                     </motion.button>
                                 </Link>
-                                <Link to="/products">
+                                <Link to="/products" className="w-full sm:w-auto">
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="w-full sm:w-auto px-10 py-5 bg-transparent border border-charcoal-300 text-charcoal-900 font-body font-bold text-[11px] uppercase tracking-[0.3em] hover:border-charcoal-900 transition-colors"
+                                        className="w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 bg-transparent border border-charcoal-300 text-charcoal-900 font-body font-bold text-[11px] uppercase tracking-[0.3em] hover:border-charcoal-900 transition-colors"
                                     >
                                         View Lookbook
                                     </motion.button>
                                 </Link>
                             </div>
 
-
+                            {/* Quick Category Pills - Mobile Only */}
+                            <div className="flex flex-wrap gap-2 lg:hidden">
+                                {['T-Shirts', 'Shirts', 'Track Pants', 'Pants'].map(cat => (
+                                    <Link key={cat} to={`/products?category=${encodeURIComponent(cat)}`}>
+                                        <span className="inline-block px-3 py-1.5 bg-white border border-beige-200 text-charcoal-600 font-body font-bold text-[9px] uppercase tracking-widest rounded-full shadow-sm hover:border-charcoal-900 transition-colors">
+                                            {cat}
+                                        </span>
+                                    </Link>
+                                ))}
+                            </div>
                         </motion.div>
 
                         <motion.div
@@ -135,24 +144,24 @@ export const HomePage = () => {
             </section>
 
             {/* Marquee Strip */}
-            <div className="py-5 bg-charcoal-900 overflow-hidden">
+            <div className="py-4 sm:py-5 bg-charcoal-900 overflow-hidden">
                 <div className="animate-marquee">
                     {[...marqueeItems, ...marqueeItems, ...marqueeItems].map((item, i) => (
-                        <span key={i} className="inline-flex items-center space-x-6 mx-6">
-                            <span className="font-display text-2xl italic font-light text-white/70 tracking-widest">{item}</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-beige-500 flex-shrink-0" />
+                        <span key={i} className="inline-flex items-center space-x-4 sm:space-x-6 mx-4 sm:mx-6">
+                            <span className="font-display text-lg sm:text-2xl italic font-light text-white/70 tracking-widest">{item}</span>
+                            <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-beige-500 flex-shrink-0" />
                         </span>
                     ))}
                 </div>
             </div>
 
             {/* Featured Products */}
-            <section className="py-28 bg-beige-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <section className="py-16 sm:py-28 bg-beige-50">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 sm:mb-16 gap-4 sm:gap-6">
                         <div>
                             <span className="section-label">New Arrivals</span>
-                            <h2 className="font-display text-5xl md:text-6xl font-bold text-charcoal-900 tracking-tight">
+                            <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-charcoal-900 tracking-tight">
                                 Fresh
                                 <br />
                                 <span className="italic font-light text-beige-600">Drops</span>
@@ -162,7 +171,7 @@ export const HomePage = () => {
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
-                                className="px-8 py-4 border border-charcoal-900 text-charcoal-900 font-body font-bold text-[11px] uppercase tracking-widest hover:bg-charcoal-900 hover:text-white transition-all"
+                                className="px-6 sm:px-8 py-3 sm:py-4 border border-charcoal-900 text-charcoal-900 font-body font-bold text-[11px] uppercase tracking-widest hover:bg-charcoal-900 hover:text-white transition-all"
                             >
                                 View All
                             </motion.button>
@@ -170,13 +179,13 @@ export const HomePage = () => {
                     </div>
 
                     {loading ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
                             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
                                 <LoadingSkeleton key={i} type="product" />
                             ))}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
                             {featuredProducts.map((product, index) => (
                                 <motion.div
                                     key={product.id}
@@ -196,27 +205,27 @@ export const HomePage = () => {
 
             {/* Newsletter CTA */}
             <section className="py-0">
-                <div className="bg-charcoal-900 py-20 px-4">
+                <div className="bg-charcoal-900 py-14 sm:py-20 px-4">
                     <div className="max-w-2xl mx-auto text-center">
-                        <span className="font-body text-[10px] font-black uppercase tracking-[0.4em] text-beige-500 mb-6 block">Exclusive Access</span>
-                        <h2 className="font-display text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+                        <span className="font-body text-[10px] font-black uppercase tracking-[0.4em] text-beige-500 mb-4 sm:mb-6 block">Exclusive Access</span>
+                        <h2 className="font-display text-3xl sm:text-5xl md:text-6xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
                             Join the
                             <br />
                             <span className="italic font-light text-beige-400">Inner Circle</span>
                         </h2>
-                        <p className="font-body text-charcoal-400 text-lg mb-10">
+                        <p className="font-body text-charcoal-400 text-sm sm:text-lg mb-8 sm:mb-10">
                             Get early access to drops, exclusive offers, and style tips delivered straight to your inbox.
                         </p>
                         <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
                             <input
                                 type="email"
                                 placeholder="Your email address"
-                                className="flex-grow bg-charcoal-800 border border-charcoal-700 text-white placeholder:text-charcoal-500 py-4 px-6 font-body text-sm focus:border-beige-400 outline-none transition-all"
+                                className="flex-grow bg-charcoal-800 border border-charcoal-700 text-white placeholder:text-charcoal-500 py-3 sm:py-4 px-4 sm:px-6 font-body text-sm focus:border-beige-400 outline-none transition-all"
                             />
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
-                                className="px-8 py-4 bg-white text-charcoal-900 font-body font-bold text-[11px] uppercase tracking-widest hover:bg-beige-100 transition-colors"
+                                className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-charcoal-900 font-body font-bold text-[11px] uppercase tracking-widest hover:bg-beige-100 transition-colors whitespace-nowrap"
                             >
                                 Subscribe
                             </motion.button>

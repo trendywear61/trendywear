@@ -73,8 +73,9 @@ export const Navbar = () => {
                 }`}
         >
             {/* Top announcement bar */}
-            <div className="bg-charcoal-900 text-white text-center py-2 text-[10px] font-body font-bold tracking-[0.3em] uppercase">
-                Free Shipping on Orders Above ₹999 &nbsp;·&nbsp; Welcome to Trendy Wear
+            <div className="bg-charcoal-900 text-white text-center py-1.5 sm:py-2 text-[9px] sm:text-[10px] font-body font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase truncate px-4">
+                <span className="hidden sm:inline">Free Shipping on Orders Above ₹999 &nbsp;·&nbsp; Welcome to Trendy Wear</span>
+                <span className="sm:hidden">Free Shipping Above ₹999</span>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

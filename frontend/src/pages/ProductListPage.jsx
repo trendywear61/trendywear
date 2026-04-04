@@ -97,15 +97,15 @@ export const ProductListPage = () => {
     const currentCategory = filters.category;
 
     return (
-        <div className="min-h-screen bg-[#faf9f7] pt-32 pb-24">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-[#faf9f7] pt-24 sm:pt-32 pb-16 sm:pb-24">
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-6 mb-6 sm:mb-12">
                     <div>
                         <span className="section-label">
                             {currentCategory ? currentCategory : 'All Products'}
                         </span>
-                        <h1 className="font-display text-5xl md:text-7xl font-bold text-charcoal-900 tracking-tight leading-none">
+                        <h1 className="font-display text-3xl sm:text-5xl md:text-7xl font-bold text-charcoal-900 tracking-tight leading-none">
                             {currentCategory ? (
                                 <>
                                     {currentCategory.split(' ')[0]}
@@ -164,7 +164,7 @@ export const ProductListPage = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12">
+                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 sm:gap-12">
                     {/* Filters Sidebar */}
                     <aside className={`lg:col-span-3 space-y-8 ${showFilters ? 'block' : 'hidden lg:block'}`}>
                         {/* Search */}
@@ -296,7 +296,7 @@ export const ProductListPage = () => {
                     {/* Product Grid */}
                     <main className="lg:col-span-9">
                         {/* Result count */}
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center justify-between mb-4 sm:mb-6">
                             <p className="font-body text-sm text-charcoal-400 font-medium">
                                 {loading ? 'Loading...' : `${displayedProducts.length} styles found`}
                             </p>
