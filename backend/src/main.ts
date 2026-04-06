@@ -23,11 +23,16 @@ async function bootstrap() {
             process.env.FRONTEND_URL,
             "https://trendy-wear.vercel.app",
             "https://trendywear61.vercel.app",
-            "https://trendywear.vercel.app"
-          ].filter(Boolean);
-          if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+            "https://trendywear.vercel.app",
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "https://trendywearz.in",
+            "https://www.trendywearz.in"
+          ].filter((url): url is string => typeof url === 'string').map(url => url.replace(/\/$/, ''));
+          if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost")) {
             callback(null, true);
           } else {
+            console.error(`Origin blocked by CORS: ${origin}`);
             callback(new Error("Not allowed by CORS"));
           }
         }
