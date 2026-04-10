@@ -27,6 +27,9 @@ export class Product {
     @Column({ default: 0 })
     stockQty: number;
 
+    @Column('jsonb', { nullable: true, default: [] })
+    sizes: { size: string, quantity: number }[];
+
     @Column({ default: true })
     isActive: boolean;
 

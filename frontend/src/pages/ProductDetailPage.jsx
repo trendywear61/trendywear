@@ -15,6 +15,7 @@ export const ProductDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
     const [selectedImage, setSelectedImage] = useState(0);
+    const [selectedSize, setSelectedSize] = useState('');
 
     useEffect(() => {
         fetchProduct();
@@ -43,12 +44,22 @@ export const ProductDetailPage = () => {
 
     const handleAddToCart = async () => {
         if (product) {
-            if (quantity > product.stockQty) {
-                toast.error(`Only ${product.stockQty} items left in stock`);
+            if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+                toast.error('Please select a size');
                 return;
             }
-            addToCart(product, quantity);
-            toast.success(`Added ${quantity} ${product.name} to cart!`);
+
+            const stockCheck = (product.sizes && product.sizes.length > 0 && selectedSize)
+                ? (product.sizes.find(s => s.size === selectedSize)?.quantity || 0)
+                : product.stockQty;
+
+            if (quantity > stockCheck) {
+                toast.error(`Only ${stockCheck} items left in stock`);
+                return;
+            }
+
+            addToCart(product, quantity, selectedSize);
+            toast.success(`Added ${quantity} ${product.name} ${selectedSize ? `(${selectedSize})` : ''} to cart!`);
             setQuantity(1);
             
             // Re-fetch product to get updated stock info if others are buying
@@ -183,6 +194,30 @@ export const ProductDetailPage = () => {
                             <p className="text-lg text-slate-500 font-medium leading-relaxed mb-10 border-l-4 border-slate-100 pl-6 italic">
                                 "{product.description}"
                             </p>
+
+                            {product.sizes && product.sizes.length > 0 && (
+                                <div className="mb-10">
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Select Size</p>
+                                    <div className="flex flex-wrap gap-3">
+                                        {product.sizes.map((s) => (
+                                            <button
+                                                key={s.size}
+                                                disabled={s.quantity <= 0}
+                                                onClick={() => setSelectedSize(s.size)}
+                                                className={`px-6 py-3 rounded-xl border-2 text-xs font-black uppercase tracking-widest transition-all ${
+                                                    selectedSize === s.size
+                                                        ? 'border-slate-900 bg-slate-900 text-white shadow-lg'
+                                                        : s.quantity > 0
+                                                        ? 'border-slate-100 bg-white text-slate-900 hover:border-slate-900'
+                                                        : 'border-slate-50 bg-slate-50 text-slate-300 cursor-not-allowed'
+                                                }`}
+                                            >
+                                                {s.size}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         {product.stockQty > 0 ? (

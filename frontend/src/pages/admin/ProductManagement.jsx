@@ -17,6 +17,7 @@ export const ProductManagement = () => {
         price: '',
         category: '',
         stockQty: '',
+        sizes: [],
         isActive: true,
     });
     const [images, setImages] = useState([]);
@@ -61,6 +62,7 @@ export const ProductManagement = () => {
         formDataToSend.append('price', formData.price);
         formDataToSend.append('category', formData.category);
         formDataToSend.append('stockQty', formData.stockQty);
+        formDataToSend.append('sizes', JSON.stringify(formData.sizes));
         formDataToSend.append('isActive', formData.isActive);
 
         images.forEach((image) => {
@@ -93,6 +95,7 @@ export const ProductManagement = () => {
             price: product.price,
             category: product.category,
             stockQty: product.stockQty,
+            sizes: product.sizes || [],
             isActive: product.isActive,
         });
         setShowModal(true);
@@ -118,6 +121,7 @@ export const ProductManagement = () => {
             price: '',
             category: '',
             stockQty: '',
+            sizes: [],
             isActive: true,
         });
         setImages([]);
@@ -316,6 +320,61 @@ export const ProductManagement = () => {
                                         className={`input-field ${errors.stockQty ? 'border-red-500 bg-red-50' : ''}`}
                                     />
                                     {errors.stockQty && <p className="text-red-500 text-xs mt-1 font-medium">{errors.stockQty}</p>}
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                        Available Sizes & Quantities
+                                    </label>
+                                    <div className="space-y-2">
+                                        {formData.sizes.map((s, index) => (
+                                            <div key={index} className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Size (e.g. S, M, L)"
+                                                    value={s.size}
+                                                    onChange={(e) => {
+                                                        const newSizes = [...formData.sizes];
+                                                        newSizes[index].size = e.target.value;
+                                                        setFormData({ ...formData, sizes: newSizes });
+                                                    }}
+                                                    className="input-field flex-1"
+                                                />
+                                                <input
+                                                    type="number"
+                                                    placeholder="Qty"
+                                                    value={s.quantity}
+                                                    onChange={(e) => {
+                                                        const newSizes = [...formData.sizes];
+                                                        newSizes[index].quantity = parseInt(e.target.value) || 0;
+                                                        
+                                                        // Update total stockQty
+                                                        const total = newSizes.reduce((sum, sz) => sum + (parseInt(sz.quantity) || 0), 0);
+                                                        setFormData(prev => ({ ...prev, sizes: newSizes, stockQty: total }));
+                                                    }}
+                                                    className="input-field w-24"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const newSizes = formData.sizes.filter((_, i) => i !== index);
+                                                        const total = newSizes.reduce((sum, sz) => sum + (parseInt(sz.quantity) || 0), 0);
+                                                        setFormData({ ...formData, sizes: newSizes, stockQty: total });
+                                                    }}
+                                                    className="text-red-500 hover:text-red-700 px-2"
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData({ ...formData, sizes: [...formData.sizes, { size: '', quantity: 0 }] })}
+                                            className="text-sm text-primary-600 font-semibold hover:underline"
+                                        >
+                                            + Add Size
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div>

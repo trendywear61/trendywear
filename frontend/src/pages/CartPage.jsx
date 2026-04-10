@@ -79,7 +79,7 @@ export const CartPage = () => {
 
                                         <div className="flex-1 min-w-0">
                                             <h3 className="text-base sm:text-2xl font-black text-slate-900 mb-1 truncate">
-                                                {item.name}
+                                                {item.name} {item.selectedSize && <span className="text-slate-400 text-sm ml-2">({item.selectedSize})</span>}
                                             </h3>
                                             <p className="text-slate-400 font-bold text-xs sm:text-base mb-1 sm:mb-4">{item.category}</p>
                                             <p className="text-base sm:text-2xl font-black text-slate-900">₹{item.price.toLocaleString()}</p>
@@ -87,7 +87,7 @@ export const CartPage = () => {
                                             <div className="flex items-center gap-3 sm:gap-6 mt-3">
                                                 <div className="flex items-center bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 p-1">
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                        onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize)}
                                                         className="w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl bg-white text-slate-400 hover:text-slate-900 shadow-sm transition-all"
                                                     >
                                                         <svg className="w-3 h-3 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -98,7 +98,7 @@ export const CartPage = () => {
                                                         {item.quantity}
                                                     </span>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                        onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}
                                                         className="w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg sm:rounded-xl bg-white text-slate-400 hover:text-slate-900 shadow-sm transition-all"
                                                     >
                                                         <svg className="w-3 h-3 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -108,7 +108,7 @@ export const CartPage = () => {
                                                 </div>
                                                 <p className="text-sm sm:text-xl font-black text-primary-600">₹{(item.price * item.quantity).toLocaleString()}</p>
                                                 <button
-                                                    onClick={() => removeFromCart(item.id)}
+                                                    onClick={() => removeFromCart(item.id, item.selectedSize)}
                                                     className="ml-auto w-8 h-8 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl sm:rounded-2xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all"
                                                 >
                                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

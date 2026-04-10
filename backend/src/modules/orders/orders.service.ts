@@ -33,18 +33,39 @@ export class OrdersService {
                 }
 
                 // Ensure we are working with numbers
-                const currentStock = parseInt(String(product.stockQty), 10) || 0;
                 const orderQty = parseInt(String(item.quantity || item.qty), 10) || 0;
 
-                if (currentStock < orderQty) {
-                    throw new BadRequestException(`Insufficient stock for ${product.name}. Only ${currentStock} left.`);
+                if (product.sizes && product.sizes.length > 0) {
+                    const selectedSize = item.selectedSize || item.size;
+                    if (!selectedSize) {
+                        throw new BadRequestException(`Please select a size for ${product.name}.`);
+                    }
+
+                    const sizeIndex = product.sizes.findIndex(s => s.size === selectedSize);
+                    if (sizeIndex === -1) {
+                        throw new BadRequestException(`Size ${selectedSize} not available for ${product.name}.`);
+                    }
+
+                    const currentSizeStock = parseInt(String(product.sizes[sizeIndex].quantity), 10) || 0;
+                    if (currentSizeStock < orderQty) {
+                        throw new BadRequestException(`Insufficient stock for ${product.name} (Size: ${selectedSize}). Only ${currentSizeStock} left.`);
+                    }
+
+                    // Update specific size stock
+                    product.sizes[sizeIndex].quantity = currentSizeStock - orderQty;
+                    
+                    // Update total stockQty
+                    product.stockQty = product.sizes.reduce((sum, s) => sum + (parseInt(String(s.quantity)) || 0), 0);
+                } else {
+                    // Legacy/Single size product
+                    const currentStock = parseInt(String(product.stockQty), 10) || 0;
+                    if (currentStock < orderQty) {
+                        throw new BadRequestException(`Insufficient stock for ${product.name}. Only ${currentStock} left.`);
+                    }
+                    product.stockQty = Math.max(0, currentStock - orderQty);
                 }
 
-                // Update product stock
-                const newStock = Math.max(0, currentStock - orderQty);
-                
-                product.stockQty = newStock;
-                product.isActive = newStock > 0;
+                product.isActive = product.stockQty > 0;
                 await transactionalEntityManager.save(product);
             }
 

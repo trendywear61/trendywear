@@ -108,6 +108,7 @@ export const CheckoutPage = () => {
                 qty: item.quantity,
                 name: item.name,
                 price: item.price,
+                selectedSize: item.selectedSize,
                 image: item.images?.[0]
             }));
 
@@ -432,7 +433,7 @@ export const CheckoutPage = () => {
 
                             <div className="space-y-6 mb-8 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                                 {cartItems.map((item) => (
-                                    <div key={item.id} className="flex gap-4 group">
+                                    <div key={`${item.id}-${item.selectedSize}`} className="flex gap-4 group">
                                         <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex-shrink-0">
                                             <img
                                                 src={getImageUrl(item.images?.[0])}
@@ -442,7 +443,7 @@ export const CheckoutPage = () => {
                                         </div>
                                         <div className="flex-1 flex flex-col justify-center">
                                             <h3 className="font-bold text-slate-900 text-sm line-clamp-1 mb-1">
-                                                {item.name}
+                                                {item.name} {item.selectedSize && <span className="text-primary-500 ml-1">({item.selectedSize})</span>}
                                             </h3>
                                             <p className="text-xs text-slate-400 font-bold mb-1 uppercase tracking-widest">Qty: {item.quantity}</p>
                                             <p className="text-lg font-black text-slate-900 tracking-tight">

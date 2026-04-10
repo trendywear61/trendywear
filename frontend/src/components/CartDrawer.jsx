@@ -81,7 +81,7 @@ export const CartDrawer = () => {
                                 <div className="space-y-6">
                                     {cartItems.map((item) => (
                                         <motion.div
-                                            key={item.id}
+                                            key={`${item.id}-${item.selectedSize}`}
                                             layout
                                             initial={{ opacity: 0, x: 20 }}
                                             animate={{ opacity: 1, x: 0 }}
@@ -100,10 +100,10 @@ export const CartDrawer = () => {
                                                 <div>
                                                     <div className="flex justify-between items-start mb-1">
                                                         <h3 className="font-bold text-slate-900 group-hover:text-primary-600 transition-colors line-clamp-1">
-                                                            {item.name}
+                                                            {item.name} {item.selectedSize && <span className="text-slate-400 text-[10px] uppercase tracking-widest ml-2">({item.selectedSize})</span>}
                                                         </h3>
                                                         <button
-                                                            onClick={() => removeFromCart(item.id)}
+                                                            onClick={() => removeFromCart(item.id, item.selectedSize)}
                                                             className="text-slate-300 hover:text-red-500 transition-colors"
                                                         >
                                                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,7 +119,7 @@ export const CartDrawer = () => {
                                                 <div className="flex items-center justify-between mt-4">
                                                     <div className="flex items-center bg-white rounded-xl border border-slate-100 shadow-sm p-1">
                                                         <button
-                                                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                                            onClick={() => updateQuantity(item.id, item.quantity - 1, item.selectedSize)}
                                                             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-50 text-slate-400 hover:text-slate-900"
                                                         >
                                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -130,7 +130,7 @@ export const CartDrawer = () => {
                                                             {item.quantity}
                                                         </span>
                                                         <button
-                                                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                                            onClick={() => updateQuantity(item.id, item.quantity + 1, item.selectedSize)}
                                                             className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-50 text-slate-400 hover:text-slate-900"
                                                         >
                                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

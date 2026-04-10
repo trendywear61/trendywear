@@ -65,12 +65,22 @@ export class AdminController {
 
         const mainImage = imageUrls.length > 0 ? imageUrls[0] : '';
 
+        let sizes = [];
+        if (productData.sizes) {
+            try {
+                sizes = typeof productData.sizes === 'string' ? JSON.parse(productData.sizes) : productData.sizes;
+            } catch (e) {
+                console.error('Error parsing sizes:', e);
+            }
+        }
+
         return this.productsService.create({
             ...productData,
             image_url: mainImage,
             images: imageUrls,
             price: parseFloat(productData.price),
             stockQty: parseInt(productData.stockQty, 10),
+            sizes: sizes,
             isActive: productData.isActive === 'true' || productData.isActive === true,
         });
     }
@@ -108,6 +118,14 @@ export class AdminController {
         if (productData.stockQty) updateData.stockQty = parseInt(productData.stockQty, 10);
         if (productData.isActive !== undefined) {
             updateData.isActive = productData.isActive === 'true' || productData.isActive === true;
+        }
+
+        if (productData.sizes) {
+            try {
+                updateData.sizes = typeof productData.sizes === 'string' ? JSON.parse(productData.sizes) : productData.sizes;
+            } catch (e) {
+                console.error('Error parsing sizes:', e);
+            }
         }
 
         return this.productsService.update(id, updateData);
