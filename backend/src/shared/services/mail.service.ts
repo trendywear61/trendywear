@@ -8,9 +8,9 @@ export class MailService {
     private readonly logger = new Logger(MailService.name);
 
     constructor(private configService: ConfigService) {
-        const host = this.configService.get<string>('EMAIL_HOST');
-        const user = this.configService.get<string>('EMAIL_USER');
-        const pass = this.configService.get<string>('EMAIL_PASS');
+        const host = this.configService.get<string>('SMTP_HOST');
+        const user = this.configService.get<string>('SMTP_USER');
+        const pass = this.configService.get<string>('SMTP_PASS');
 
         if (!host || !user || !pass || user === 'your-email@gmail.com' || pass === 'your-app-password') {
             this.logger.warn('Email configuration missing or contains placeholders. Skipping email sending setup.');
@@ -19,8 +19,8 @@ export class MailService {
 
         this.transporter = nodemailer.createTransport({
             host,
-            port: this.configService.get<number>('EMAIL_PORT') || 587,
-            secure: this.configService.get<string>('EMAIL_SECURE') === 'true',
+            port: this.configService.get<number>('SMTP_PORT') || 587,
+            secure: this.configService.get<string>('SMTP_SECURE') === 'true',
             auth: {
                 user,
                 pass,
@@ -38,7 +38,7 @@ export class MailService {
         }
 
         const businessName = this.configService.get<string>('BUSINESS_NAME') || 'Ecommerce Store';
-        const user = this.configService.get<string>('EMAIL_USER');
+        const user = this.configService.get<string>('SMTP_USER');
 
         const mailOptions = {
             from: `"${businessName}" <${user}>`,

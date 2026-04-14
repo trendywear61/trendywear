@@ -118,7 +118,7 @@ export const AuthPage = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 className="w-full bg-slate-50 border-none rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
-                                placeholder="trendywear61@gmail.com"
+                                placeholder={import.meta.env.VITE_CONTACT_EMAIL || "your-email@gmail.com"}
                             />
                         </div>
 

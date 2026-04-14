@@ -4,7 +4,7 @@ export const getBaseUrl = () => {
         // Return base URL without the /api suffix
         return apiUrl.replace(/\/api\/?$/, '');
     }
-    return 'http://localhost:5000';
+    return ''; // Or window.location.origin for a safer default in production if needed
 };
 
 export const getImageUrl = (imagePath) => {

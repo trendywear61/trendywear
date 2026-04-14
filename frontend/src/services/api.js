@@ -7,7 +7,7 @@ if (!API_URL) {
 }
 
 const api = axios.create({
-    baseURL: (API_URL ? (API_URL.endsWith('/') ? API_URL : `${API_URL}/`) : 'http://localhost:5000/api/'),
+    baseURL: (API_URL ? (API_URL.endsWith('/') ? API_URL : `${API_URL}/`) : '/api/'),
     headers: {
         'Content-Type': 'application/json',
     },

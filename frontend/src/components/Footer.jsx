@@ -48,26 +48,26 @@ export const Footer = () => {
 
                         <div className="flex flex-col space-y-3 mb-8">
                         <div className="flex flex-col space-y-3 mb-8">
-                            <a href="tel:+918072948359" className="font-body text-sm text-charcoal-400 hover:text-white transition-colors flex items-center gap-3">
+                            <a href={`tel:${import.meta.env.VITE_WHATSAPP_NUMBER}`} className="font-body text-sm text-charcoal-400 hover:text-white transition-colors flex items-center gap-3">
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
-                                <span>+91 8072 948 359</span>
+                                <span>{import.meta.env.VITE_CONTACT_PHONE}</span>
                             </a>
-                            <a href="mailto:trendywear61@gmail.com" className="font-body text-sm text-charcoal-400 hover:text-white transition-colors flex items-center gap-3">
+                            <a href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL}`} className="font-body text-sm text-charcoal-400 hover:text-white transition-colors flex items-center gap-3">
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
-                                <span>trendywear61@gmail.com</span>
+                                <span>{import.meta.env.VITE_CONTACT_EMAIL}</span>
                             </a>
-                            <a href="https://wa.me/918072948359" target="_blank" rel="noopener noreferrer" className="font-body text-sm text-charcoal-400 hover:text-white transition-colors flex items-center gap-3">
+                            <a href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="font-body text-sm text-charcoal-400 hover:text-white transition-colors flex items-center gap-3">
                                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
                                     <path d="M11.5 0C5.159 0 0 5.159 0 11.5c0 2.013.527 3.9 1.455 5.54L.02 23l6.107-1.401C7.69 22.484 9.556 23 11.5 23 17.841 23 23 17.841 23 11.5S17.841 0 11.5 0zm0 21.09c-1.88 0-3.63-.508-5.129-1.393l-.367-.219-3.808.873.89-3.72-.24-.383C1.979 14.79 1.41 13.18 1.41 11.5c0-5.566 4.524-10.09 10.09-10.09 5.565 0 10.09 4.524 10.09 10.09S17.065 21.09 11.5 21.09z" />
                                 </svg>
                                 <span>WhatsApp Us</span>
                             </a>
-                            <a href="https://chat.whatsapp.com/FWNFZSUDK52DjF8YOdu4L4?mode=gi_t" target="_blank" rel="noopener noreferrer" className="font-body text-[10px] text-charcoal-500 hover:text-white transition-colors flex items-center gap-3 pl-1">
+                            <a href={import.meta.env.VITE_WHATSAPP_GROUP_URL} target="_blank" rel="noopener noreferrer" className="font-body text-[10px] text-charcoal-500 hover:text-white transition-colors flex items-center gap-3 pl-1">
                                 <span className="uppercase tracking-[0.2em]">Join Community Group</span>
                             </a>
                         </div>
@@ -76,7 +76,7 @@ export const Footer = () => {
                         {/* Social Links */}
                         <div className="flex items-center space-x-3">
                             {[
-                                { icon: 'instagram', url: 'https://www.instagram.com/trendy_wear_003?igsh=MW5oeGdiNDBqb3RnNw==', label: 'Instagram' },
+                                { icon: 'instagram', url: import.meta.env.VITE_INSTAGRAM_URL, label: 'Instagram' },
                             ].map((social) => (
                                 <motion.a
                                     key={social.icon}
