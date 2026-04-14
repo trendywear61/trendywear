@@ -32,8 +32,8 @@ export const CheckoutPage = () => {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
-    const upiId = import.meta.env.VITE_UPI_ID || 'daviddavid88687@okhdfcbank';
-    const businessName = import.meta.env.VITE_BUSINESS_NAME || 'Trendy Wear';
+    const upiId = import.meta.env.VITE_UPI_ID;
+    const businessName = import.meta.env.VITE_BUSINESS_NAME;
 
     const [formData, setFormData] = useState({
         name: user ? `${user.firstName} ${user.lastName}` : '',

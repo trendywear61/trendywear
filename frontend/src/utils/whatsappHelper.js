@@ -16,7 +16,8 @@ export const generateWhatsAppMessage = (order) => {
         ? items.map(item => `- ${item.name} x${item.qty}`).join('\n')
         : '';
 
-    const message = `*✨ New Order at Trendy Wear ✨*
+    const businessName = import.meta.env.VITE_BUSINESS_NAME || 'Trendy Wear';
+    const message = `*✨ New Order at ${businessName} ✨*
     
 *Order ID:* ${id}
 *Customer Name:* ${customer?.name || 'N/A'}
