@@ -313,6 +313,12 @@ export const OrderManagement = () => {
                                             ₹{selectedOrder.totalAmount.toLocaleString()}
                                         </p>
                                     </div>
+                                    {selectedOrder.utr && (
+                                        <div className="col-span-2 mt-2 p-3 bg-primary-50 border border-primary-100 rounded-xl">
+                                            <p className="text-xs font-black text-primary-600 uppercase tracking-widest mb-1">UPI Transaction ID (UTR)</p>
+                                            <p className="font-mono text-lg font-bold text-slate-900 tracking-wider">{selectedOrder.utr}</p>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div>

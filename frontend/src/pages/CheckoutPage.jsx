@@ -20,6 +20,20 @@ export const CheckoutPage = () => {
     const { user, isAuthenticated } = useAuth();
     const [loading, setLoading] = useState(false);
     const [screenshot, setScreenshot] = useState(null);
+    const [utr, setUtr] = useState('');
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+        };
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    const upiId = import.meta.env.VITE_UPI_ID || 'daviddavid88687@okhdfcbank';
+    const businessName = import.meta.env.VITE_BUSINESS_NAME || 'Trendy Wear';
 
     const [formData, setFormData] = useState({
         name: user ? `${user.firstName} ${user.lastName}` : '',
@@ -81,6 +95,14 @@ export const CheckoutPage = () => {
             toast.error('Please enter a valid 6-digit pincode');
             return false;
         }
+        if ((paymentMethod === 'QR' || paymentMethod === 'UPI') && !utr.trim()) {
+            toast.error('Please enter your 12-digit UPI Transaction ID (UTR)');
+            return false;
+        }
+        if ((paymentMethod === 'QR' || paymentMethod === 'UPI') && utr.trim().length !== 12) {
+            toast.error('Please enter a valid 12-digit UTR number');
+            return false;
+        }
         if (paymentMethod === 'QR' && !screenshot) {
             toast.error('Please upload your payment screenshot');
             return false;
@@ -117,6 +139,10 @@ export const CheckoutPage = () => {
             payloadData.append('customer', JSON.stringify(formData));
             payloadData.append('totalAmount', total);
             payloadData.append('paymentMethod', paymentMethod);
+
+            if ((paymentMethod === 'QR' || paymentMethod === 'UPI') && utr) {
+                payloadData.append('utr', utr);
+            }
 
             if (paymentMethod === 'QR' && screenshot) {
                 payloadData.append('screenshot', screenshot);
@@ -310,26 +336,24 @@ export const CheckoutPage = () => {
 
                                     <motion.label
                                         whileHover={{ y: -4 }}
-                                        className={`relative p-6 rounded-[2rem] border-2 transition-all cursor-pointer ${paymentMethod === 'QR' ? 'border-primary-600 bg-primary-50/30' : 'border-slate-100 bg-slate-50 hover:bg-white hover:border-primary-200'
+                                        className={`relative p-6 rounded-[2rem] border-2 transition-all cursor-pointer ${paymentMethod === 'UPI' ? 'border-primary-600 bg-primary-50/30' : 'border-slate-100 bg-slate-50 hover:bg-white hover:border-primary-200'
                                             }`}
                                     >
                                         <input
                                             type="radio"
                                             name="paymentMethod"
-                                            value="QR"
-                                            checked={paymentMethod === 'QR'}
+                                            value="UPI"
+                                            checked={paymentMethod === 'UPI'}
                                             onChange={(e) => setPaymentMethod(e.target.value)}
                                             className="hidden"
                                         />
                                         <div className="flex flex-col items-center text-center gap-4">
                                             <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-                                                <svg className="w-8 h-8 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m0 11v1m5-10v1m0 8v1m-9-4h1m8 0h1m-7 7h10a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2" />
-                                                </svg>
+                                                <img src="https://www.vectorlogo.zone/logos/google_pay/google_pay-icon.svg" className="w-8 h-8 object-contain" alt="GPay" />
                                             </div>
-                                            <span className="font-black text-slate-900 text-lg uppercase tracking-tight">UPI / QR PAYMENT</span>
+                                            <span className="font-black text-slate-900 text-lg uppercase tracking-tight">GPay / UPI</span>
                                         </div>
-                                        {paymentMethod === 'QR' && (
+                                        {paymentMethod === 'UPI' && (
                                             <div className="absolute top-4 right-4 text-primary-600">
                                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -339,64 +363,96 @@ export const CheckoutPage = () => {
                                     </motion.label>
                                 </div>
 
-                                {paymentMethod === 'QR' && (
+                                {(paymentMethod === 'QR' || paymentMethod === 'UPI') && (
                                     <motion.div
                                         initial={{ opacity: 0, height: 0 }}
                                         animate={{ opacity: 1, height: 'auto' }}
                                         className="mt-8 p-8 bg-slate-900 rounded-[2.5rem] text-white overflow-hidden"
                                     >
                                         <div className="flex flex-col md:flex-row items-center gap-8">
-                                            <div className="w-40 h-40 bg-white p-4 rounded-3xl flex items-center justify-center">
-                                                <div className="w-full text-center">
-                                                    <QRCodeSVG
-                                                        value={generateUPIString(Date.now().toString(), total)}
-                                                        size={128}
-                                                        level="H"
-                                                        includeMargin={true}
-                                                    />
+                                            {(!isMobile || paymentMethod === 'QR') && (
+                                                <div className="w-40 h-40 bg-white p-4 rounded-3xl flex items-center justify-center">
+                                                    <div className="w-full text-center">
+                                                        <QRCodeSVG
+                                                            value={generateUPIString(Date.now().toString(), total)}
+                                                            size={128}
+                                                            level="H"
+                                                            includeMargin={true}
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}
+                                            
                                             <div className="flex-1 text-center md:text-left">
-                                                <h3 className="text-xl font-black mb-2 uppercase tracking-tight">Pay via UPI</h3>
-                                                <div className="bg-white/10 px-6 py-3 rounded-2xl mb-4 inline-flex items-center gap-3">
-                                                    <code className="text-primary-400 font-bold text-lg">daviddavid88687@okhdfcbank</code>
-                                                    <button 
-                                                        type="button"
-                                                        onClick={() => {
-                                                            navigator.clipboard.writeText('daviddavid88687@okhdfcbank');
-                                                            toast.success('UPI ID copied to clipboard');
-                                                        }}
-                                                        className="text-slate-400 hover:text-white transition-colors p-2"
-                                                        title="Copy UPI ID"
+                                                <h3 className="text-xl font-black mb-2 uppercase tracking-tight">
+                                                    {isMobile && paymentMethod === 'UPI' ? 'Quick Checkout' : 'Pay via UPI'}
+                                                </h3>
+                                                
+                                                {isMobile && paymentMethod === 'UPI' ? (
+                                                    <motion.a
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                        href={`upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${total}&cu=INR&tn=Order-${Date.now()}`}
+                                                        className="inline-flex items-center gap-3 bg-white text-slate-900 px-8 py-4 rounded-2xl font-black text-lg mb-4"
                                                     >
-                                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                                        </svg>
-                                                    </button>
-                                                </div>
+                                                        <img src="https://www.vectorlogo.zone/logos/google_pay/google_pay-icon.svg" className="w-6 h-6" alt="" />
+                                                        Pay via GPay App
+                                                    </motion.a>
+                                                ) : (
+                                                    <div className="bg-white/10 px-6 py-3 rounded-2xl mb-4 inline-flex items-center gap-3">
+                                                        <code className="text-primary-400 font-bold text-lg">{upiId}</code>
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => {
+                                                                navigator.clipboard.writeText(upiId);
+                                                                toast.success('UPI ID copied to clipboard');
+                                                            }}
+                                                            className="text-slate-400 hover:text-white transition-colors p-2"
+                                                            title="Copy UPI ID"
+                                                        >
+                                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                )}
 
-                                                <p className="text-slate-400 text-sm font-medium leading-relaxed mb-4">
-                                                    Please transfer the total amount to the UPI ID above. After payment, upload your payment screenshot below.
+                                                <p className="text-slate-400 text-sm font-medium leading-relaxed mb-6">
+                                                    {isMobile && paymentMethod === 'UPI' 
+                                                        ? 'Click the button above to pay directly via Google Pay or any UPI app.' 
+                                                        : 'Please transfer the total amount to the UPI ID above. After payment, enter the UTR number below.'}
                                                 </p>
-                                                <div className="bg-slate-800 p-4 rounded-xl border border-slate-700/50">
-                                                    <label className="block text-sm font-bold text-slate-300 mb-2">Upload Payment Screenshot *</label>
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={(e) => setScreenshot(e.target.files[0])}
-                                                        required={paymentMethod === 'QR'}
-                                                        className="block w-full text-sm text-slate-400
-                                                            file:mr-4 file:py-2.5 file:px-6
-                                                            file:rounded-xl file:border-0
-                                                            file:text-sm file:font-bold
-                                                            file:bg-primary-500 file:text-white
-                                                            hover:file:bg-primary-600 file:transition-all
-                                                            file:cursor-pointer"
-                                                    />
-                                                    {screenshot && (
-                                                        <p className="mt-2 text-primary-400 text-xs font-medium">
-                                                            Selected: {screenshot.name}
-                                                        </p>
+
+                                                <div className="space-y-4">
+                                                    <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700/50">
+                                                        <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Transaction ID (UTR Number) *</label>
+                                                        <input
+                                                            type="text"
+                                                            value={utr}
+                                                            onChange={(e) => setUtr(e.target.value.replace(/\D/g, ''))}
+                                                            placeholder="Enter 12-digit UTR number"
+                                                            maxLength="12"
+                                                            className="w-full px-5 py-3 bg-slate-900 border border-slate-700 rounded-xl focus:border-primary-500 transition-all outline-none text-white font-mono text-lg tracking-widest"
+                                                        />
+                                                        <p className="mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-tight italic">Find UTR in your payment history / GPay details</p>
+                                                    </div>
+
+                                                    {paymentMethod === 'QR' && (
+                                                        <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700/50">
+                                                            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Upload Screenshot (Optional)</label>
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                onChange={(e) => setScreenshot(e.target.files[0])}
+                                                                className="block w-full text-sm text-slate-400
+                                                                    file:mr-4 file:py-2 file:px-4
+                                                                    file:rounded-xl file:border-0
+                                                                    file:text-xs file:font-bold
+                                                                    file:bg-primary-500 file:text-white
+                                                                    hover:file:bg-primary-600 file:transition-all
+                                                                    file:cursor-pointer"
+                                                            />
+                                                        </div>
                                                     )}
                                                 </div>
                                             </div>

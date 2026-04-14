@@ -125,6 +125,7 @@ export class OrdersService {
                               <p><strong>Order ID:</strong> ${savedOrder.id}</p>
                               <p><strong>Total Amount:</strong> ₹${parseFloat(savedOrder.totalAmount.toString()).toLocaleString()}</p>
                               <p><strong>Payment Method:</strong> ${savedOrder.paymentMethod}</p>
+                              ${savedOrder.utr ? `<p><strong>UTR Number:</strong> ${savedOrder.utr}</p>` : ''}
                           </div>
                       </div>
                     `,

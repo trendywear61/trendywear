@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 export enum PaymentMethod {
     COD = 'COD',
     QR = 'QR',
+    UPI = 'UPI',
     RAZORPAY = 'RAZORPAY',
 }
 
@@ -58,6 +59,9 @@ export class Order {
 
     @Column({ nullable: true })
     paymentScreenshot: string;
+
+    @Column({ nullable: true })
+    utr: string;
 
     @CreateDateColumn()
     @Index()
