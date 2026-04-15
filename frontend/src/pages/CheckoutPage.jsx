@@ -374,23 +374,41 @@ export const CheckoutPage = () => {
                                         <h3 className="text-xl font-black mb-6 uppercase tracking-tight text-center">Complete Your Payment</h3>
 
                                         {/* Pay Now Button — opens any UPI app */}
-                                        <motion.button
-                                            type="button"
-                                            whileHover={{ scale: 1.03 }}
-                                            whileTap={{ scale: 0.97 }}
-                                            onClick={() => {
-                                                const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${total}&cu=INR&tn=Order-${Date.now()}`;
-                                                window.location.href = upiLink;
-                                            }}
-                                            className="w-full flex items-center justify-center gap-4 bg-gradient-to-r from-primary-500 to-primary-600 text-white py-5 rounded-2xl font-black text-xl uppercase tracking-wider shadow-2xl shadow-primary-900/40 mb-3"
-                                        >
-                                            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                            </svg>
-                                            Pay Now  ₹{total.toLocaleString()}
-                                        </motion.button>
-                                        <p className="text-center text-[11px] text-slate-400 font-bold uppercase tracking-widest mb-8">
-                                            Tap to open GPay · PhonePe · Paytm · BHIM
+                                        <div className="relative mb-4">
+                                            {/* Pulsing glow ring */}
+                                            <span className="absolute inset-0 rounded-[2rem] bg-green-400/30 animate-ping" style={{ animationDuration: '1.8s' }} />
+                                            <motion.button
+                                                type="button"
+                                                whileHover={{ scale: 1.04, boxShadow: '0 0 48px 8px rgba(34,197,94,0.55)' }}
+                                                whileTap={{ scale: 0.97 }}
+                                                onClick={() => {
+                                                    const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${total}&cu=INR&tn=Order-${Date.now()}`;
+                                                    window.location.href = upiLink;
+                                                }}
+                                                className="relative w-full flex flex-col items-center justify-center gap-1 bg-gradient-to-r from-green-500 via-emerald-500 to-green-400 text-white py-6 rounded-[2rem] font-black shadow-2xl shadow-green-900/60 border-2 border-green-300/30 overflow-hidden"
+                                            >
+                                                {/* Shimmer strip */}
+                                                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full animate-[shimmer_2.2s_infinite]" style={{ animation: 'shimmer 2.2s infinite' }} />
+
+                                                <span className="flex items-center gap-3 text-2xl sm:text-3xl uppercase tracking-widest leading-tight">
+                                                    <svg className="w-8 h-8 drop-shadow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                    </svg>
+                                                    Pay Now
+                                                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                                    </svg>
+                                                </span>
+
+                                                {/* Amount badge */}
+                                                <span className="mt-1 px-5 py-1 bg-white/20 rounded-full text-base font-black tracking-wider">
+                                                    ₹{total.toLocaleString()} · Secure UPI Payment
+                                                </span>
+                                            </motion.button>
+                                        </div>
+
+                                        <p className="text-center text-[11px] text-green-400/80 font-bold uppercase tracking-widest mb-8">
+                                            ⚡ Opens GPay · PhonePe · Paytm · BHIM automatically
                                         </p>
 
                                         {/* OR divider */}
