@@ -389,15 +389,20 @@ export const CheckoutPage = () => {
                                                 </h3>
                                                 
                                                 {isMobile && paymentMethod === 'UPI' ? (
-                                                    <motion.a
-                                                        whileHover={{ scale: 1.05 }}
-                                                        whileTap={{ scale: 0.95 }}
-                                                        href={`upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${total}&cu=INR&tn=Order-${Date.now()}`}
-                                                        className="inline-flex items-center gap-3 bg-white text-slate-900 px-8 py-4 rounded-2xl font-black text-lg mb-4"
-                                                    >
-                                                        <img src="https://www.vectorlogo.zone/logos/google_pay/google_pay-icon.svg" className="w-6 h-6" alt="" />
-                                                        Pay via GPay App
-                                                    </motion.a>
+                                                    <>
+                                                        <motion.a
+                                                            whileHover={{ scale: 1.05 }}
+                                                            whileTap={{ scale: 0.95 }}
+                                                            href={`upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${total}&cu=INR&tn=Order-${Date.now()}`}
+                                                            className="inline-flex items-center justify-center gap-3 bg-white text-slate-900 w-full px-8 py-4 rounded-2xl font-black text-lg mb-4"
+                                                        >
+                                                            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                                            </svg>
+                                                            Pay Now
+                                                        </motion.a>
+                                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest text-center mb-6">Opens GPay, PhonePe, Paytm, etc.</p>
+                                                    </>
                                                 ) : (
                                                     <div className="bg-white/10 px-6 py-3 rounded-2xl mb-4 inline-flex items-center gap-3">
                                                         <code className="text-primary-400 font-bold text-lg">{upiId}</code>
