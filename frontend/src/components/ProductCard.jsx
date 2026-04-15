@@ -98,9 +98,9 @@ export const ProductCard = ({ product }) => {
                 {/* Sizes - Hide on small mobile */}
                 {product.sizes && product.sizes.length > 0 && (
                     <div className="hidden sm:flex flex-wrap gap-1.5 mb-4">
-                        {product.sizes.map((size) => (
-                            <span key={size} className="font-body text-[9px] font-black text-charcoal-400 border border-beige-200 px-2 py-0.5 uppercase">
-                                {size}
+                        {product.sizes.map((s) => (
+                            <span key={s.size} className="font-body text-[9px] font-black text-charcoal-400 border border-beige-200 px-2 py-0.5 uppercase">
+                                {s.size}
                             </span>
                         ))}
                     </div>

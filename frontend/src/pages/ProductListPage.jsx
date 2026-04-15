@@ -89,7 +89,7 @@ export const ProductListPage = () => {
     // Filter products by size (client-side, since size is a product attribute)
     const displayedProducts = selectedSizes.length > 0
         ? products.filter((p) => {
-            const availSizes = p.sizes || [];
+            const availSizes = p.sizes ? p.sizes.map(s => typeof s === 'string' ? s : s.size) : [];
             return selectedSizes.some((s) => availSizes.includes(s));
         })
         : products;
