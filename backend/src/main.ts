@@ -27,7 +27,7 @@ async function bootstrap() {
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
       
-      if (process.env.NODE_ENV !== "production" || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.includes("localhost")) {
+      if (process.env.NODE_ENV !== "production" || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app") || origin.endsWith("trendywearz.in") || origin.includes("localhost")) {
         callback(null, true);
       } else {
         console.error(`Origin blocked by CORS: ${origin}`);
