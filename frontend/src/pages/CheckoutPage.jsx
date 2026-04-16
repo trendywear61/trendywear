@@ -303,7 +303,7 @@ export const CheckoutPage = () => {
                                     Payment Method
                                 </h2>
 
-                                <div className="grid sm:grid-cols-2 gap-4">
+                                <div className="grid sm:grid-cols-3 gap-4">
                                     <motion.label
                                         whileHover={{ y: -4 }}
                                         className={`relative p-6 rounded-[2rem] border-2 transition-all cursor-pointer ${paymentMethod === 'COD' ? 'border-primary-600 bg-primary-50/30' : 'border-slate-100 bg-slate-50 hover:bg-white hover:border-primary-200'
@@ -323,7 +323,7 @@ export const CheckoutPage = () => {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                                                 </svg>
                                             </div>
-                                            <span className="font-black text-slate-900 text-lg uppercase tracking-tight">CASH ON DELIVERY</span>
+                                            <span className="font-black text-slate-900 text-base uppercase tracking-tight">CASH ON DELIVERY</span>
                                         </div>
                                         {paymentMethod === 'COD' && (
                                             <div className="absolute top-4 right-4 text-primary-600">
@@ -353,9 +353,42 @@ export const CheckoutPage = () => {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                                 </svg>
                                             </div>
-                                            <span className="font-black text-slate-900 text-lg uppercase tracking-tight">GPay / UPI</span>
+                                            <span className="font-black text-slate-900 text-base uppercase tracking-tight">GPay / UPI</span>
+                                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest -mt-2">Deep Link</span>
                                         </div>
                                         {paymentMethod === 'UPI' && (
+                                            <div className="absolute top-4 right-4 text-primary-600">
+                                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        )}
+                                    </motion.label>
+
+                                    {/* QR / Scan & Pay card — from Memories-store reference */}
+                                    <motion.label
+                                        whileHover={{ y: -4 }}
+                                        className={`relative p-6 rounded-[2rem] border-2 transition-all cursor-pointer ${paymentMethod === 'QR' ? 'border-primary-600 bg-primary-50/30' : 'border-slate-100 bg-slate-50 hover:bg-white hover:border-primary-200'
+                                            }`}
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="paymentMethod"
+                                            value="QR"
+                                            checked={paymentMethod === 'QR'}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                            className="hidden"
+                                        />
+                                        <div className="flex flex-col items-center text-center gap-4">
+                                            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg text-violet-600">
+                                                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                                                </svg>
+                                            </div>
+                                            <span className="font-black text-slate-900 text-base uppercase tracking-tight">QR / Scan</span>
+                                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest -mt-2">+ Screenshot</span>
+                                        </div>
+                                        {paymentMethod === 'QR' && (
                                             <div className="absolute top-4 right-4 text-primary-600">
                                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -495,7 +528,7 @@ export const CheckoutPage = () => {
                                                 <p className="mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-tight italic">Find UTR in your payment history / GPay details</p>
                                             </div>
                                             <div className="bg-slate-800 p-6 rounded-2xl border border-slate-700/50">
-                                                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Upload Screenshot (Optional)</label>
+                                                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Upload Payment Screenshot *</label>
                                                 <input
                                                     type="file"
                                                     accept="image/*"
@@ -508,6 +541,15 @@ export const CheckoutPage = () => {
                                                         hover:file:bg-primary-600 file:transition-all
                                                         file:cursor-pointer"
                                                 />
+                                                {screenshot && (
+                                                    <div className="mt-3 flex items-center gap-2 text-green-400 text-xs font-bold">
+                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        {screenshot.name}
+                                                    </div>
+                                                )}
+                                                <p className="mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-tight italic">Upload your GPay / PhonePe payment screenshot for quick verification</p>
                                             </div>
                                         </div>
                                     </motion.div>

@@ -69,6 +69,13 @@ export class OrdersService {
                 await transactionalEntityManager.save(product);
             }
 
+            // Auto-set paymentStatus based on payment method (matches Memories-store reference pattern)
+            if (orderData.paymentMethod === 'UPI' || orderData.paymentMethod === 'QR') {
+                orderData.paymentStatus = PaymentStatus.PendingVerification;
+            } else {
+                orderData.paymentStatus = PaymentStatus.Unpaid;
+            }
+
             const order = this.orderRepository.create(orderData);
             const savedOrder: any = await transactionalEntityManager.save(order);
 
