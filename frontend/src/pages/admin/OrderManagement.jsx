@@ -401,19 +401,6 @@ export const OrderManagement = () => {
                                             </div>
                                         </div>
                                     ) : selectedOrder.paymentMethod === 'QR' ? (
-                                        <div>
-                                            <p className="text-xs text-gray-500 mb-3 italic">Click image to view full size</p>
-                                            <div className="bg-gray-50 p-4 rounded-lg flex justify-center">
-                                                <a href={getImageUrl(selectedOrder.paymentScreenshot)} target="_blank" rel="noopener noreferrer">
-                                                    <img
-                                                        src={getImageUrl(selectedOrder.paymentScreenshot)}
-                                                        alt="Payment Screenshot"
-                                                        className="max-h-64 object-contain rounded shadow-sm border border-gray-200 hover:scale-[1.02] transition-transform cursor-pointer"
-                                                    />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    ) : selectedOrder.paymentMethod === 'QR' ? (
                                         <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg text-orange-800 text-sm font-medium">
                                             ⚠️ This order was placed via <strong>QR Payment</strong>, but no screenshot was uploaded by the customer. Please verify payment manually.
                                         </div>
