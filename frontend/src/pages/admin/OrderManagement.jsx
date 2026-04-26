@@ -382,7 +382,6 @@ export const OrderManagement = () => {
                                         ))}
                                     </div>
                                 </div>
-                                </div>
 
                                 {/* Payment Info — matches Memories-store reference */}
                                 <div className="mt-6">
