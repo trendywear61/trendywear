@@ -302,10 +302,7 @@ export const CheckoutPage = () => {
                                     <div className="w-10 h-10 bg-primary-100/50 text-primary-600 rounded-xl flex items-center justify-center text-lg">2</div>
                                     Payment Method
                                 </h2>
-
-                                <div className="grid sm:grid-cols-3 gap-4">
-
-
+                                <div className="grid sm:grid-cols-2 gap-4">
                                     <motion.label
                                         whileHover={{ y: -4 }}
                                         className={`relative p-6 rounded-[2rem] border-2 transition-all cursor-pointer ${paymentMethod === 'UPI' ? 'border-primary-600 bg-primary-50/30' : 'border-slate-100 bg-slate-50 hover:bg-white hover:border-primary-200'
@@ -388,12 +385,9 @@ export const CheckoutPage = () => {
                                                     const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(businessName)}&am=${total}&cu=INR&tn=Order-${Date.now()}`;
                                                     window.location.href = upiLink;
                                                 }}
-                                                className="w-full flex items-center justify-center gap-3 bg-green-600 hover:bg-green-700 text-white py-5 rounded-2xl font-bold transition-all shadow-lg"
+                                                className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-xl font-bold transition-all"
                                             >
-                                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                                </svg>
-                                                <span className="text-lg uppercase tracking-wider">Pay ₹{total.toLocaleString()} via UPI</span>
+                                                Pay ₹{total.toLocaleString()} Now
                                             </motion.button>
                                         </div>
 
