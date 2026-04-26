@@ -383,7 +383,7 @@ export const OrderManagement = () => {
                                     </div>
                                 </div>
 
-                                {/* Payment Info — matches Memories-store reference */}
+                                {/* Payment Info */}
                                 <div className="mt-6">
                                     <h3 className="font-bold text-gray-900 mb-3">Payment Info</h3>
                                     {selectedOrder.paymentScreenshot ? (
