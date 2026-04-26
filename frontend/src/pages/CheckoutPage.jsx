@@ -83,15 +83,16 @@ export const CheckoutPage = () => {
         return null; // out of zone
     };
 
-    const [deliveryCharge, setDeliveryCharge] = useState(100);
-    const [deliveryInfo, setDeliveryInfo]     = useState(null);   // { km, charge }
+    const [deliveryCharge, setDeliveryCharge] = useState(0);
+    const [deliveryInfo, setDeliveryInfo]     = useState(null);
     const [deliveryLoading, setDeliveryLoading] = useState(false);
     const [deliveryError, setDeliveryError]   = useState('');
     const [outOfZone, setOutOfZone]           = useState(false);
+    const [deliveryCalculated, setDeliveryCalculated] = useState(false);
 
     const subtotal = getCartTotal();
-    const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD;
-    const effectiveDelivery = isFreeDelivery ? 0 : deliveryCharge;
+    const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD && deliveryCalculated;
+    const effectiveDelivery = !deliveryCalculated ? 0 : isFreeDelivery ? 0 : deliveryCharge;
     const total = subtotal + effectiveDelivery;
 
     const calculateDelivery = async (pincode) => {
@@ -100,6 +101,7 @@ export const CheckoutPage = () => {
         setDeliveryError('');
         setDeliveryInfo(null);
         setOutOfZone(false);
+        setDeliveryCalculated(false);
         try {
             const res = await fetch(
                 `https://nominatim.openstreetmap.org/search?postalcode=${pincode}&country=India&format=json`,
@@ -119,9 +121,11 @@ export const CheckoutPage = () => {
                 setDeliveryInfo({ km: km.toFixed(1), charge });
                 setOutOfZone(false);
             }
+            setDeliveryCalculated(true);
         } catch {
             setDeliveryError('Could not determine delivery charge. Default ₹100 applied.');
             setDeliveryCharge(100);
+            setDeliveryCalculated(true);
         } finally {
             setDeliveryLoading(false);
         }
@@ -137,6 +141,8 @@ export const CheckoutPage = () => {
             setDeliveryInfo(null);
             setDeliveryError('');
             setOutOfZone(false);
+            setDeliveryCalculated(false);
+            setDeliveryCharge(0);
         }
     };
 
