@@ -12,9 +12,8 @@ export const CartPage = () => {
         document.title = "Shopping Bag | Trendy Wear";
     }, []);
 
-    const deliveryCharge = 50;
     const subtotal = getCartTotal();
-    const total = subtotal + deliveryCharge;
+    const total = subtotal;
 
     const handleCheckout = () => {
         navigate('/checkout');
@@ -136,7 +135,7 @@ export const CartPage = () => {
                                     </div>
                                     <div className="flex justify-between font-bold text-slate-400 pb-4 sm:pb-6 border-b border-white/10">
                                         <span>Delivery</span>
-                                        <span className="text-green-400">₹{deliveryCharge}</span>
+                                        <span className="text-slate-400 text-xs font-bold italic">Calculated at checkout</span>
                                     </div>
                                     <div className="flex justify-between items-end pt-2 sm:pt-4">
                                         <div>
