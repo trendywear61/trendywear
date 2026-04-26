@@ -60,7 +60,7 @@ export const CheckoutPage = () => {
     const [paymentMethod, setPaymentMethod] = useState('UPI');
 
     // ── Delivery charge state ──────────────────────────────────────────────
-    const STORE = { lat: 9.1726, lng: 77.5418 };
+    const STORE = { lat: 9.1814318, lng: 77.4129016 };
     const FREE_DELIVERY_THRESHOLD = 999;
 
     const haversineDistance = (lat1, lng1, lat2, lng2) => {
