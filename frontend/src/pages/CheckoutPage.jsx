@@ -59,15 +59,85 @@ export const CheckoutPage = () => {
 
     const [paymentMethod, setPaymentMethod] = useState('UPI');
 
-    const deliveryCharge = 50;
+    // ── Delivery charge state ──────────────────────────────────────────────
+    const STORE = { lat: 9.1726, lng: 77.5418 };
+    const FREE_DELIVERY_THRESHOLD = 999;
+
+    const haversineDistance = (lat1, lng1, lat2, lng2) => {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a =
+            Math.sin(dLat / 2) ** 2 +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    const getChargeForDistance = (km) => {
+        if (km <= 5)   return 30;
+        if (km <= 15)  return 60;
+        if (km <= 30)  return 100;
+        if (km <= 50)  return 150;
+        if (km <= 100) return 200;
+        return null; // out of zone
+    };
+
+    const [deliveryCharge, setDeliveryCharge] = useState(100);
+    const [deliveryInfo, setDeliveryInfo]     = useState(null);   // { km, charge }
+    const [deliveryLoading, setDeliveryLoading] = useState(false);
+    const [deliveryError, setDeliveryError]   = useState('');
+    const [outOfZone, setOutOfZone]           = useState(false);
+
     const subtotal = getCartTotal();
-    const total = subtotal + deliveryCharge;
+    const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD;
+    const effectiveDelivery = isFreeDelivery ? 0 : deliveryCharge;
+    const total = subtotal + effectiveDelivery;
+
+    const calculateDelivery = async (pincode) => {
+        if (pincode.length !== 6) return;
+        setDeliveryLoading(true);
+        setDeliveryError('');
+        setDeliveryInfo(null);
+        setOutOfZone(false);
+        try {
+            const res = await fetch(
+                `https://nominatim.openstreetmap.org/search?postalcode=${pincode}&country=India&format=json`,
+                { headers: { 'User-Agent': 'TrendyWear/1.0' } }
+            );
+            const data = await res.json();
+            if (!data || data.length === 0) throw new Error('Invalid pincode');
+            const { lat, lon } = data[0];
+            const km = haversineDistance(STORE.lat, STORE.lng, parseFloat(lat), parseFloat(lon));
+            const charge = getChargeForDistance(km);
+            if (charge === null) {
+                setOutOfZone(true);
+                setDeliveryCharge(0);
+                setDeliveryInfo(null);
+            } else {
+                setDeliveryCharge(charge);
+                setDeliveryInfo({ km: km.toFixed(1), charge });
+                setOutOfZone(false);
+            }
+        } catch {
+            setDeliveryError('Could not determine delivery charge. Default ₹100 applied.');
+            setDeliveryCharge(100);
+        } finally {
+            setDeliveryLoading(false);
+        }
+    };
 
     const handleInputChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+        if (name === 'pincode' && value.length === 6) {
+            calculateDelivery(value);
+        }
+        if (name === 'pincode' && value.length < 6) {
+            setDeliveryInfo(null);
+            setDeliveryError('');
+            setOutOfZone(false);
+        }
     };
 
     const validateForm = () => {
@@ -134,10 +204,17 @@ export const CheckoutPage = () => {
                 image: item.images?.[0]
             }));
 
+            if (outOfZone) {
+                toast.error('Your pincode is outside our delivery zone. Please contact us.');
+                setLoading(false);
+                return;
+            }
+
             const payloadData = new FormData();
             payloadData.append('items', JSON.stringify(itemsFormatted));
             payloadData.append('customer', JSON.stringify(formData));
             payloadData.append('totalAmount', total);
+            payloadData.append('deliveryCharge', effectiveDelivery);
             payloadData.append('paymentMethod', paymentMethod);
 
             if ((paymentMethod === 'QR' || paymentMethod === 'UPI') && utr) {
@@ -282,16 +359,35 @@ export const CheckoutPage = () => {
 
                                         <div className="space-y-2">
                                             <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Pincode</label>
-                                            <input
-                                                type="text"
-                                                name="pincode"
-                                                value={formData.pincode}
-                                                onChange={handleInputChange}
-                                                required
-                                                maxLength="6"
-                                                className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none text-slate-900 font-bold"
-                                                placeholder="6-digit"
-                                            />
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    name="pincode"
+                                                    value={formData.pincode}
+                                                    onChange={handleInputChange}
+                                                    required
+                                                    maxLength="6"
+                                                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:border-primary-500 transition-all outline-none text-slate-900 font-bold pr-12"
+                                                    placeholder="6-digit"
+                                                />
+                                                {deliveryLoading && (
+                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 border-2 border-slate-300 border-t-primary-500 rounded-full animate-spin" />
+                                                )}
+                                            </div>
+                                            {deliveryInfo && !isFreeDelivery && (
+                                                <p className="text-xs font-bold text-green-600 flex items-center gap-1 ml-1">
+                                                    📦 Delivery charge: ₹{deliveryInfo.charge} ({deliveryInfo.km} km from store)
+                                                </p>
+                                            )}
+                                            {isFreeDelivery && deliveryInfo && (
+                                                <p className="text-xs font-bold text-green-600 ml-1">🎉 Free delivery on orders above ₹999!</p>
+                                            )}
+                                            {outOfZone && (
+                                                <p className="text-xs font-bold text-red-500 ml-1">🚫 Outside our delivery zone. Please contact us.</p>
+                                            )}
+                                            {deliveryError && (
+                                                <p className="text-xs font-bold text-amber-500 ml-1">⚠️ {deliveryError}</p>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -566,7 +662,17 @@ export const CheckoutPage = () => {
                                 </div>
                                 <div className="flex justify-between text-slate-600 font-medium pb-4 border-b border-slate-100">
                                     <span>Delivery Charge</span>
-                                    <span className="text-green-600 font-bold">₹{deliveryCharge}</span>
+                                    <span className="font-bold">
+                                        {deliveryLoading ? (
+                                            <span className="text-slate-400 text-xs">Calculating…</span>
+                                        ) : outOfZone ? (
+                                            <span className="text-red-500 text-xs">Out of zone</span>
+                                        ) : isFreeDelivery ? (
+                                            <span className="text-green-500">FREE</span>
+                                        ) : (
+                                            <span className="text-green-600">₹{effectiveDelivery}</span>
+                                        )}
+                                    </span>
                                 </div>
                                 <div className="flex justify-between items-end pt-4">
                                     <span className="text-2xl font-black text-slate-900 italic tracking-tighter">Total Price</span>
