@@ -57,7 +57,7 @@ export const CheckoutPage = () => {
         }
     }, [user]);
 
-    const [paymentMethod, setPaymentMethod] = useState('COD');
+    const [paymentMethod, setPaymentMethod] = useState('UPI');
 
     const deliveryCharge = 50;
     const subtotal = getCartTotal();
@@ -304,35 +304,7 @@ export const CheckoutPage = () => {
                                 </h2>
 
                                 <div className="grid sm:grid-cols-3 gap-4">
-                                    <motion.label
-                                        whileHover={{ y: -4 }}
-                                        className={`relative p-6 rounded-[2rem] border-2 transition-all cursor-pointer ${paymentMethod === 'COD' ? 'border-primary-600 bg-primary-50/30' : 'border-slate-100 bg-slate-50 hover:bg-white hover:border-primary-200'
-                                            }`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="paymentMethod"
-                                            value="COD"
-                                            checked={paymentMethod === 'COD'}
-                                            onChange={(e) => setPaymentMethod(e.target.value)}
-                                            className="hidden"
-                                        />
-                                        <div className="flex flex-col items-center text-center gap-4">
-                                            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
-                                                <svg className="w-8 h-8 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                </svg>
-                                            </div>
-                                            <span className="font-black text-slate-900 text-base uppercase tracking-tight">CASH ON DELIVERY</span>
-                                        </div>
-                                        {paymentMethod === 'COD' && (
-                                            <div className="absolute top-4 right-4 text-primary-600">
-                                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        )}
-                                    </motion.label>
+
 
                                     <motion.label
                                         whileHover={{ y: -4 }}

@@ -1,6 +1,6 @@
 # Production-Ready E-commerce Web Application
 
-A full-featured e-commerce platform built with React (Vite), Node.js, Express, and PostgreSQL. Features include product management, shopping cart, multiple payment methods (COD, UPI QR), admin panel, and WhatsApp integration.
+A full-featured e-commerce platform built with React (Vite), Node.js, Express, and PostgreSQL. Features include product management, shopping cart, UPI/QR payments, admin panel, and WhatsApp integration.
 
 ## 🚀 Features
 
@@ -11,7 +11,6 @@ A full-featured e-commerce platform built with React (Vite), Node.js, Express, a
 - **Shopping Cart**: Animated slide-in drawer with quantity management
 - **Checkout**: Customer details form with validation
 - **Payment Methods**:
-  - Cash on Delivery (COD)
   - UPI/QR Payment with dynamic QR code generation
   - Razorpay (placeholder for future integration)
 - **Order Confirmation**: WhatsApp order sharing with prefilled message
@@ -151,7 +150,7 @@ Frontend will run on: http://localhost:3000
 6. Click cart icon to view cart drawer
 7. Proceed to checkout
 8. Fill in customer details
-9. Select payment method (COD or QR)
+9. Select payment method (UPI or QR)
 10. Place order
 11. View order confirmation with QR code (if QR payment selected)
 12. Share order via WhatsApp
