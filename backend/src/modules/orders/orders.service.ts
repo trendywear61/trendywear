@@ -248,4 +248,16 @@ export class OrdersService {
             data: savedOrder,
         };
     }
+
+    async deleteOrder(id: string) {
+        const order = await this.orderRepository.findOne({ where: { id } });
+        if (!order) {
+            throw new NotFoundException('Order not found');
+        }
+        await this.orderRepository.remove(order);
+        return {
+            success: true,
+            message: 'Order deleted successfully',
+        };
+    }
 }

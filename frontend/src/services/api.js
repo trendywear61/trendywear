@@ -101,6 +101,7 @@ export const adminAPI = {
     // Orders
     getAllOrders: (params) => api.get('admin/orders', { params }),
     updateOrder: (id, data) => api.patch(`admin/orders/${id}`, data),
+    deleteOrder: (id) => api.delete(`admin/orders/${id}`),
 };
 
 export default api;

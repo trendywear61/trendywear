@@ -66,7 +66,20 @@ export const OrderManagement = () => {
         }
     };
 
-    const exportOrders = () => {
+    const handleDeleteOrder = async (orderId) => {
+        if (!window.confirm('Are you sure you want to permanently delete this order? This cannot be undone.')) return;
+        try {
+            await adminAPI.deleteOrder(orderId);
+            toast.success('Order deleted successfully');
+            setOrders(prev => prev.filter(o => o.id !== orderId));
+            if (selectedOrder?.id === orderId) setSelectedOrder(null);
+        } catch (error) {
+            console.error('Error deleting order:', error);
+            toast.error('Failed to delete order');
+        }
+    };
+
+    const exportOrders = async () => {
         if (orders.length === 0) {
             toast.error('No orders to export');
             return;
@@ -190,6 +203,7 @@ export const OrderManagement = () => {
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Payment</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Actions</th>
+                                    <th className="px-4 py-4 text-center text-sm font-semibold text-gray-900">Delete</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
@@ -244,6 +258,17 @@ export const OrderManagement = () => {
                                                 className="text-primary-600 hover:text-primary-700 font-medium"
                                             >
                                                 View Details
+                                            </button>
+                                        </td>
+                                        <td className="px-4 py-4 text-center">
+                                            <button
+                                                onClick={() => handleDeleteOrder(order.id)}
+                                                title="Delete order"
+                                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all mx-auto"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
                                             </button>
                                         </td>
                                     </tr>
