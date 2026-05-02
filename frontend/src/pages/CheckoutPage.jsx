@@ -75,9 +75,7 @@ export const CheckoutPage = () => {
     };
 
     const getChargeForDistance = (km) => {
-        if (km <= 5)   return 30;
-        if (km <= 15)  return 60;
-        if (km <= 30)  return 100;
+        if (km <= 30)  return 0;   // Free shipping within 30 km
         if (km <= 50)  return 150;
         if (km <= 100) return 200;
         return null; // out of zone
